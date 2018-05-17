@@ -9,8 +9,4 @@ from model.tagtoentry import TagToEntry
 
 db.connect()
 db.create_tables([Entry, Image, Key, KeyValuePair, Tag, TagToEntry])
-
-test_tag = Tag(name="test")
-test_tag.save()
-
 db.close()
