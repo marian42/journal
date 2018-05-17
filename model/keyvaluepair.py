@@ -1,5 +1,5 @@
 from peewee import *
-from entry import *
+from event import *
 from key import *
 from database import db
 
@@ -7,7 +7,7 @@ from database import db
 class KeyValuePair(Model):
 	__tablename__ = 'keyvaluepair'
 	
-	entry = ForeignKeyField(Entry, backref='key_value_pairs')
+	entry = ForeignKeyField(Event, backref='key_value_pairs')
 	key = ForeignKeyField(Key)
 	value = CharField()
 	

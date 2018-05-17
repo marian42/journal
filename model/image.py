@@ -1,11 +1,11 @@
 from peewee import *
-from entry import *
+from event import *
 from database import db
 
 class Image(Model):
 	__tablename__ = 'images'
 	
-	entry = ForeignKeyField(Entry, backref='tags')
+	entry = ForeignKeyField(Event, backref='tags')
 	
 	filename = CharField()
 	thumbnail_filename = CharField()

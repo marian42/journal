@@ -2,8 +2,8 @@ from peewee import *
 
 from database import db
 
-class Entry(Model):
-	__tablename__ = 'entries'
+class Event(Model):
+	__tablename__ = 'events'
 	
 	summary = CharField()
 	time = DateTimeField()
@@ -24,12 +24,11 @@ class Entry(Model):
 		
 	@staticmethod
 	def add(summary, time, latitude = None, longitude = None, hash = None, tags = [], kvps = {}):
-		result = Entry(summary = summary, time = time, latitude = latitude, longitude = longitude, hash = hash)
+		result = Event(summary = summary, time = time, latitude = latitude, longitude = longitude, hash = hash)
 		result.save()
 		for tag in tags:
 			result.add_tag(tag)
 		for key in kvps.keys():
-			print key
 			from key import Key
 			from keyvaluepair import KeyValuePair
 			db_key = Key.get_key(key)
