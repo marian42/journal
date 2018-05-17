@@ -9,7 +9,7 @@ class Key(Model):
 	_items = None
 	
 	@staticmethod
-	def get(value):
+	def get_key(value):
 		if Key._items == None:
 			Key._items = {}
 			keys = Key.select()

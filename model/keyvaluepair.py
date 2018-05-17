@@ -3,8 +3,9 @@ from entry import *
 from key import *
 from database import db
 
+
 class KeyValuePair(Model):
-	__tablename__ = 'keyvaluepairs'
+	__tablename__ = 'keyvaluepair'
 	
 	entry = ForeignKeyField(Entry, backref='key_value_pairs')
 	key = ForeignKeyField(Key)

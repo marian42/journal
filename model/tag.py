@@ -9,12 +9,13 @@ class Tag(Model):
 	_items = None
 	
 	@staticmethod
-	def get(value):
+	def get_tag(value):
 		if Tag._items == None:
 			Tag._items = {}
 			tags = Tag.select()
 			for tag in tags:
 				Tag._items[tag.name] = tag
+		
 		if Tag._items.has_key(value):
 			return Tag._items[value]
 		else:
