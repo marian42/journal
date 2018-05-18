@@ -20,6 +20,7 @@ class Key(Model):
 		else:
 			key = Key(name=value)
 			key.save()
+			Key._items[value] = key
 			return key
 
 	class Meta:

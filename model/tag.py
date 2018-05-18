@@ -20,6 +20,7 @@ class Tag(Model):
 			return Tag._items[value]
 		else:
 			tag = Tag(name = value)
+			Tag._items[value] = tag
 			tag.save()
 			return tag
 

@@ -1,7 +1,9 @@
 from model.event import Event
 from model.key import Key
 from model.keyvaluepair import KeyValuePair
+import database as db
 
+db.init()
 
 def add(summary, time, latitude = None, longitude = None, hash = None, tags = [], kvps = {}):
 	result = Event(summary = summary, time = time, latitude = latitude, longitude = longitude, hash = hash)
