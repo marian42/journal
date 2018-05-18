@@ -1,8 +1,26 @@
 from database import db
+from model.event import Event
+
+def remove_duplicates():
+	Event2 = Event.alias()
+	query = Event.select(Event.id)\
+		.join(Event2, on=(Event.hash == Event2.hash))\
+		.where(Event.hash.is_null(False) and Event.id > Event2.id)
+	
+	with db.atomic():
+		print "Deleting " + str(len(query)) + " duplicates..."
+		for item in query:
+			Event.delete_by_id(item.id)
+		print "Done."
+		
 
 
-import time
+def display_latest():
+	query = Event.select().order_by(Event.time)[:100]
+	
+	for event in query:
+		print str(event.time) + " " + event.summary
+
 
 db.connect()
-db.create_tables([Event, Image, Key, KeyValuePair, Tag, TagToEntry])
-db.close()
+display_latest()
