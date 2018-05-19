@@ -34,5 +34,19 @@ class Event(Model):
 		tag_to_event = TagToEvent(tag = tag, event = self)
 		tag_to_event.save(force_insert=True)
 	
+	@staticmethod
+	def format_tags(tags, length=25):
+		result = tags[0]
+		for tag in tags[1:]:
+			result += ", " + tag
+		if len(result) > length - 2:
+			result = "[" + result[:length - 5] + "...]"
+		else:
+			result = "[" + result + "]" + " " * (length - 2 - len(result))
+		return result
+	
+	def to_string(self):
+		return self.get_time().strftime("%Y-%m-%d %H:%M") + " " + Event.format_tags(self.get_tags()) + " " + self.summary
+	
 	class Meta:
 		database = db
