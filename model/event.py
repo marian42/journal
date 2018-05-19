@@ -1,4 +1,5 @@
 from peewee import *
+import dateutil.parser
 
 from database import db
 
@@ -10,6 +11,17 @@ class Event(Model):
 	latitude = DoubleField(null=True)
 	longitude = DoubleField(null=True)
 	hash = CharField(null=True, index=True)
+	
+	def get_time(self):
+		return dateutil.parser.parse(self.time)
+	
+	def get_tags(self):
+		from tagtoevent import TagToEvent
+		from tag import Tag
+		query = Tag.select(Tag.name)\
+			.join(TagToEvent, on=(Tag.id == TagToEvent.tag_id))\
+			.where(TagToEvent.event_id == self.id)
+		return [tag.name for tag in query]
 	
 	def add_tag(self, tag_name):
 		from tag import Tag
