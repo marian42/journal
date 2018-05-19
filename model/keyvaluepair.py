@@ -7,10 +7,10 @@ from database import db
 class KeyValuePair(Model):
 	__tablename__ = 'keyvaluepair'
 	
-	entry = ForeignKeyField(Event, backref='key_value_pairs')
+	event = ForeignKeyField(Event, backref='key_value_pairs')
 	key = ForeignKeyField(Key)
 	value = CharField()
 	
 	class Meta:
-		primary_key = CompositeKey('entry', 'key')
+		primary_key = CompositeKey('event', 'key')
 		database = db

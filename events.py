@@ -12,5 +12,5 @@ def add(summary, time, latitude = None, longitude = None, hash = None, tags = []
 		result.add_tag(tag)
 	for key in kvps.keys():
 		db_key = Key.get_key(key)
-		kvp = KeyValuePair(key = db_key, value = kvps[key], entry = result)
+		kvp = KeyValuePair(key = db_key, value = kvps[key], event = result)
 		kvp.save(force_insert=True)

@@ -8,7 +8,7 @@ def init():
 	from model.key import Key
 	from model.keyvaluepair import KeyValuePair
 	from model.tag import Tag
-	from model.tagtoentry import TagToEntry
+	from model.tagtoevent import TagToEvent
 	db.connect()
-	db.create_tables([Event, Image, Key, KeyValuePair, Tag, TagToEntry])
+	db.create_tables([Event, Image, Key, KeyValuePair, Tag, TagToEvent])
 	db.close()
