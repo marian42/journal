@@ -1,6 +1,8 @@
 from git import Repo, InvalidGitRepositoryError
 import events
 from database import db
+import os
+
 
 def import_repository(directory = "data/git/test"):
 	name = directory.split("/")[-1]
@@ -25,8 +27,6 @@ def import_repository(directory = "data/git/test"):
 	return True
 
 def import_repositories(directory = "data/git/"):
-	import os
-	
 	count = 0
 	for repository in [os.path.join(directory, name) for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]:
 		if import_repository(repository):

@@ -14,8 +14,6 @@ def remove_duplicates():
 			Event.delete_by_id(item.id)
 		print "Done."
 		
-
-
 def display_latest():
 	query = Event.select().order_by(Event.time)[:100]
 	
