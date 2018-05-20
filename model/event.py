@@ -1,5 +1,6 @@
 from peewee import *
 import dateutil.parser
+import datetime
 
 from database import db
 
@@ -13,7 +14,18 @@ class Event(Model):
 	hash = CharField(null=True, index=True)
 	
 	def get_time(self):
-		return dateutil.parser.parse(self.time)
+		if type(self.time) == datetime.datetime:
+			return self.time
+		else:
+			#return dateutil.parser.parse(self.time)
+			result = None
+			try:
+				result = dateutil.parser.parse(self.time)
+			except Exception as e:
+				print(e)
+				print type(self.time)
+				print self.time
+			return result
 	
 	def get_tags(self):
 		from tagtoevent import TagToEvent
