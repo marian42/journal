@@ -1,4 +1,3 @@
-from git import Repo, InvalidGitRepositoryError
 import events
 from database import db
 import json
