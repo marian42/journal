@@ -3,7 +3,7 @@ from database import db
 import os
 import datetime
 
-currencies = {"EUR": u"\u20AC", "USD": "$"}
+currencies = {"EUR": "\u20AC", "USD": "$"}
 
 def import_money(directory="data/money/"):
 	with db.atomic():
