@@ -10,7 +10,7 @@ In steam, click on your wallet amount, click "View licenses and product key acti
 Save this page as an html document and provide the directory it's in.
 '''
 
-def import_itad(directory="data/steam/"):
+def import_steam(directory="data/steam/"):
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
 			tree = html.fromstring(open(file_name).read())
@@ -23,4 +23,4 @@ def import_itad(directory="data/steam/"):
 				events.add("Added Steam game " + name + " to library.", time, ["steam", "game"], kvps={"name": name})
 
 if __name__ == "__main__":
-	import_itad()
+	import_steam()

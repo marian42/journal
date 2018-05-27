@@ -157,5 +157,7 @@ def import_facebook_data(directory = "data/facebook/"):
 		read_messages(directory)
 		print "Reading Facebook photos..."
 		read_photos(directory)
-	
-import_facebook_data()
+
+
+if __name__ == "__main__":
+	import_facebook_data()
