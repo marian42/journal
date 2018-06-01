@@ -111,7 +111,7 @@ def read_messages(directory):
 					message["photos"]) > 1 else "an image") + " from " +  message["sender_name"] + ".",
 				           datetime.datetime.fromtimestamp(message["timestamp"]),
 				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)},
-				           images=[photo["uri"] for photo in message["photos"]])
+				           images=[directory + photo["uri"] for photo in message["photos"]])
 				
 		create_conversation_event(title, message_count, session_start_time, ", ".join(participants), history, session_count == 0)
 		
