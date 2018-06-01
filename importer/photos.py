@@ -27,6 +27,9 @@ def convert_to_degress(value):
 
 def import_photos(directory="data/photos/"):
 	with db.atomic():
+		count = 0
+		last_update = datetime.datetime.now()
+		print "Importing images from " + directory + "..."
 		for file in get_files(directory):
 			tags = exifread.process_file(open(file, 'rb'))
 			
@@ -35,8 +38,15 @@ def import_photos(directory="data/photos/"):
 			except ValueError:
 				print "Bad time format: " + tags["Image DateTime"].values
 				continue
+			except KeyError:
+				print "Image has no EXIF data. Skipping. " + file
+				continue
 			
-			camera = tags["Image Make"].values + " " + tags["Image Model"].values
+			camera = "Camera"
+			if "Image Model" in tags:
+				camera = tags["Image Model"].values
+				if "Image Make" in tags:
+					camera = tags["Image Make"].values + " " + camera
 			
 			latitude = None
 			longitude = None
@@ -44,7 +54,16 @@ def import_photos(directory="data/photos/"):
 				latitude = convert_to_degress(tags["GPS GPSLatitude"].values) * (1 if tags["GPS GPSLatitudeRef"].values == "N" else -1)
 				longitude = convert_to_degress(tags["GPS GPSLongitude"].values) * (1 if tags["GPS GPSLongitudeRef"].values == "E" else -1)
 				
-			events.add("Took a picture with " + camera, time, ["photo", camera], {"camera": camera}, latitude=latitude, longitude=longitude, images=[file])
+			try:
+				events.add("Took a picture with " + camera, time, ["photo", camera], {"camera": camera}, latitude=latitude, longitude=longitude, images=[file])
+				count += 1
+			except:
+				print "Skipping file " + file + "."
+				
+			if (datetime.datetime.now() - last_update).total_seconds() > 5:
+				last_update = datetime.datetime.now()
+				print str(count) + " images found..."
+	print "Done importing images."
 
 if __name__ == "__main__":
 	import_photos()

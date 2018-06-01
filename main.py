@@ -1,7 +1,7 @@
 from database import db
 from model.event import Event
 from model.image import Image
-import events
+import datetime
 
 def remove_duplicates():
 	Event2 = Event.alias()
@@ -22,8 +22,17 @@ def display_latest():
 		print event.to_string()
 		
 def create_thumbnails():
+	count = 0
+	last_update = datetime.datetime.now()
+	
+	print "Creating thumbnails..."
 	for image in Image.select():
 		image.create_thumbnail(False)
+		count += 1
+		if (datetime.datetime.now() - last_update).total_seconds() > 5:
+			last_update = datetime.datetime.now()
+			print str(count) + " thumbnais created..."
+	print "All thumnails created."
 
 
 db.connect()
