@@ -1,5 +1,6 @@
 from database import db
 from model.event import Event
+from model.image import Image
 import events
 
 def remove_duplicates():
@@ -19,6 +20,10 @@ def display_latest():
 	
 	for event in query:
 		print event.to_string()
+		
+def create_thumbnails():
+	for image in Image.select():
+		image.create_thumbnail(False)
 
 
 db.connect()
