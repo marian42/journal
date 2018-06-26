@@ -31,4 +31,4 @@ TBD
 TBD
 
 #### License
-TBD
+[MIT](/LICENSE)
