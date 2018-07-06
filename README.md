@@ -18,7 +18,7 @@ Create a `data` folder in `journal/`
   2. Unzip downloaded `facebook-<username>.zip` to `data` and rename unzipped folder to `facebook`
 
 ###### `Google`
-  1. Download personal Google data archive with the following:
+  1. Download personal Google data archive with the following
   (Detailed instructions can be found on Google Account Help [_here_](https://support.google.com/accounts/answer/3024190?hl=en)):
       1. Calendar
       2. Location History
@@ -26,14 +26,14 @@ Create a `data` folder in `journal/`
   2. Unzip downloaded archive to `data` and rename unzipped folder to `google`
 
 ###### `Twitter`
-  1. TBD
-  2. TBD
-  3. TBD
+  1.  Download personal Twitter archive
+  (Detailed instructions can be found on Twitter Help Center [_here_](https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive)):
+  2. Unzip downloaded archive to `data` and rename unzipped folder to `twitter`
 
 ###### `Steam`
   1. Create a `steam` subfolder in `/data`
-  2. In steam, click on your wallet amount, then click on "View licenses and product key activations".
-  3. Save this page as an html document to `/data/steam`.
+  2. In steam, click on your wallet amount, then click on "View licenses and product key activations"
+  3. Save this page as an html document to `/data/steam`
 
 
 #### Run
