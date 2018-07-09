@@ -27,7 +27,7 @@ Create a `data` folder in `journal/`
 
 ###### `Twitter`
   1.  Download personal Twitter archive
-  (Detailed instructions can be found on Twitter Help Center [_here_](https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive)):
+  (Detailed instructions can be found on Twitter Help Center [_here_](https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive))
   2. Unzip downloaded archive to `data` and rename unzipped folder to `twitter`
 
 ###### `Steam`
@@ -35,6 +35,10 @@ Create a `data` folder in `journal/`
   2. In steam, click on your wallet amount, then click on "View licenses and product key activations"
   3. Save this page as an html document to `/data/steam`
 
+###### `Paypal`
+  1. Download Paypal transaction history in csv format
+  (Detailed instruction can be found on Paypal Help Center [_here_](https://www.paypal.com/us/smarthelp/article/how-do-i-download-my-transaction-history-faq1007))
+  2. Create a 'paypal' subfolder in `/data` and move the downloaded csv files to `/data/paypal`
 
 #### Run
 * `python2.7 import_all.py`
