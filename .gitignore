@@ -64,3 +64,4 @@ journal\.db
 
 
 data/
+*.db

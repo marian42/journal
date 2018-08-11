@@ -1,0 +1,91 @@
+body {
+	padding: 0px;
+	margin: 0px;
+	font-family: sans-serif;
+	font-size: 10px;
+}
+
+.calendar {
+	height: 100vh;
+	width: 230px;
+	float: left;
+	background-color: #FAFAFA;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-left: 60px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	box-sizing: border-box;
+}
+
+.calendar .block {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin: 0px 1px;
+	color: #000000;
+}
+
+.calendar .day {
+	cursor: pointer;
+}
+
+.calendar .year {
+	width: 110px;
+	margin: 8px 0px;
+	color: #8F8F8F;
+	font-size: 14px;
+	text-align: center;
+	cursor: pointer;
+}
+
+
+.calendar .month {
+	position: relative;
+	display: inline-block;
+	height: 0px;
+	width: 0px;
+	text-transform: uppercase;
+	color: #8F8F8F;
+	font-size: 14px;
+	transform: rotate(-90deg);
+	left: -30px;
+	top: 30px;
+    white-space:nowrap;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.calendar .linebreak {
+	width:100%;
+}
+
+.calendar .shade0 {
+	background-color: #EBEDF0;
+	color: #CCCED1;
+}
+
+.calendar .shade1 {
+	background-color: #C6E48B;
+	color: #AEC977;
+}
+
+.calendar .shade2 {
+	background-color: #7BC96F;
+	color: #6DAA65;
+}
+
+.calendar .shade3 {
+	background-color: #239A3B;
+	color: #1E6E2E;
+}
+
+.calendar .shade4 {
+	background-color: #196127;
+	color: #122712;
+}
+
+.calendar .shade5 {
+	background-color: #113714;
+	color: #000000;
+}
