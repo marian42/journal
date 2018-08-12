@@ -6,6 +6,7 @@ body {
 }
 
 .calendar {
+	position: fixed;
 	height: 100vh;
 	width: 230px;
 	float: left;
@@ -88,4 +89,29 @@ body {
 .calendar .shade5 {
 	background-color: #113714;
 	color: #000000;
+}
+
+.timeline {
+	position: fixed;
+
+	margin-left: 230px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 20px;
+	box-sizing: border-box;
+
+	height: 100vh;
+	width: calc(100% - 230px);
+
+	font-size: 14px;
+}
+
+.loadMore {
+	margin: 20px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.event {
+	padding: 5px;
 }
