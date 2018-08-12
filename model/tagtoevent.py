@@ -1,6 +1,6 @@
 from peewee import *
-from event import *
-from tag import *
+from .event import *
+from .tag import *
 from database import db
 
 class TagToEvent(Model):

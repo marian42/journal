@@ -23,8 +23,8 @@ class Event(Model):
 				result = dateutil.parser.parse(self.time)
 			except Exception as e:
 				print(e)
-				print type(self.time)
-				print self.time
+				print(type(self.time))
+				print(self.time)
 			return result
 	
 	def get_tags(self):

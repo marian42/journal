@@ -1,4 +1,4 @@
-from event import *
+from .event import *
 from database import db
 import os
 from PIL import Image as PILImage
@@ -28,7 +28,7 @@ class Image(Model):
 			image.thumbnail((256, 256), PILImage.ANTIALIAS)
 			image.save(filename, format)
 		except Exception as e:
-			print "Error trying to create thumbnail for " + self.file + ": " + str(e)
+			print("Error trying to create thumbnail for " + self.file + ": " + str(e))
 	
 	class Meta:
 		database = db

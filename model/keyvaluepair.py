@@ -1,6 +1,6 @@
 from peewee import *
-from event import *
-from key import *
+from .event import *
+from .key import *
 from database import db
 
 
