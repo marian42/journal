@@ -91,16 +91,15 @@ class LoadMore extends TimelineElement {
 		other.counterpart = this;
 	}
 
-	replace(data) {
+	replace(data, scroll) {
 		var start = this.forward ? this.time : this.counterpart.time;
 		var end = this.forward ? this.counterpart.time : this.time;
 		var complete = data.length < 100;
-		for (var event of data) {
-			var t = new Date(event.time);
+		for (var dict of data) {
+			var t = new Date(dict.time);
 			if ((t >= start && !this.forward) || (t <= end && this.forward)) {
-				new Event(event);
+				var event = new Event(dict);
 			} else {
-				console.log("outside " + t + ", " + start + " - " + end);
 				complete = true;
 			}
 		}
@@ -121,11 +120,15 @@ class LoadMore extends TimelineElement {
 			}
 			newLoadMore.setCounterpart(this.counterpart);
 		}
+
+		if (scroll) {
+			getDayDivider(new Date(data[0].time)).element.scrollIntoView();
+		}
 	}
 
-	load() {
+	load(scroll) {
 		var instance = this;
-		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward}, success: function(data) { instance.replace(data); }});
+		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward}, success: function(data) { instance.replace(data, scroll); }});
 	}
 
 	remove() {
@@ -203,8 +206,7 @@ function jumpTo(time) {
 	for (var item of loadMoreIntervals) {
 		if (item.contains(time)) {
 			var start = item.split(time);
-			start.element.scrollIntoView();
-			start.load();
+			start.load(true);
 			return;
 		}
 	}
