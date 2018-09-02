@@ -113,5 +113,21 @@ body {
 }
 
 .event {
-	padding: 5px;
+	padding: 6px;
+}
+
+.timeline .day {
+	padding: 6px;
+	padding-top: 15px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.timeline .event .time {
+	position: absolute;
+	color: #545454;
+}
+
+.timeline .event .summary {
+	padding-left: 50px;
 }

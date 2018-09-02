@@ -1,5 +1,5 @@
 var calendar = $('.calendar')[0];
-var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+var monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 var colorLimits = [0, 1, 5, 10, 20];
 
 function addElement(tag, className) {
@@ -66,6 +66,8 @@ function buildCalendar(data) {
 				count = data.data[keyYear][keyMonth][keyDay];
 			}
 		setColor(element, count);
+		var dayCopy = new Date(day);
+		element.addEventListener('click', function() { jumpTo(dayCopy); });
 
 		if (day.getDay() == 6) {
 			addElement("br", "linebreak");
@@ -73,7 +75,7 @@ function buildCalendar(data) {
 
 			if (showMonth) {
 				monthElement = addElement("div", "month");
-				monthElement.innerText = monthNames[currentMonth];
+				monthElement.innerText = monthNamesShort[currentMonth];
 				showMonth = false;
 			}
 		}

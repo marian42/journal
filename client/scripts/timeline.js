@@ -1,5 +1,8 @@
 var timeline = [];
 var container = $('.timeline')[0];
+var dayDividers = {}
+var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 Date.prototype.format = function() {
   var mm = this.getMonth() + 1;
@@ -7,6 +10,12 @@ Date.prototype.format = function() {
   var hours = this.getHours();
   var minutes = this.getMinutes();
   return [(dd>9 ? '' : '0') + dd, (mm>9 ? '' : '0') + mm, this.getFullYear()].join('.') + " " + (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
+};
+
+Date.prototype.formatTime = function() {
+  var hours = this.getHours();
+  var minutes = this.getMinutes();
+  return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
 };
 
 class TimelineElement {
@@ -39,8 +48,22 @@ class Event extends TimelineElement {
 	constructor(dict) {
 		var element = document.createElement("div");
 		element.className = "event";
-		super(new Date(dict.time), element);
-		element.innerText = this.time.format() + " " + dict.summary;
+		var time = new Date(dict.time);
+		time.add
+
+		var timeDiv = document.createElement("div");
+		timeDiv.innerText = time.formatTime();
+		timeDiv.className = "time";
+		element.appendChild(timeDiv);
+
+		var messageDiv = document.createElement("div");
+		messageDiv.innerText = dict.summary;
+		messageDiv.className = "summary";
+		element.appendChild(messageDiv);
+
+		getDayDivider(time);
+		time.setMilliseconds(10);
+		super(time, element);
 		this.data = dict;
 	}
 }
@@ -84,11 +107,11 @@ class LoadMore extends TimelineElement {
 			var newLoadMore = null;
 			if (this.forward) {
 				var t = new Date(data[data.length - 1].time);
-				t.setMilliseconds(t.getMilliseconds() + 1);
+				t.setMilliseconds(t.getMilliseconds() + 2);
 				newLoadMore = new LoadMore(t, true);
 			} else {
 				var t = new Date(data[0].time);
-				t.setMilliseconds(t.getMilliseconds() - 1);
+				t.setMilliseconds(t.getMilliseconds() - 2);
 				newLoadMore = new LoadMore(t, false);
 			}
 			newLoadMore.setCounterpart(this.counterpart);
@@ -99,6 +122,43 @@ class LoadMore extends TimelineElement {
 		var instance = this;
 		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward}, success: function(data) { instance.replace(data); }});
 	}
+}
+
+class DayDivider extends TimelineElement {
+	constructor(time) {
+		var element = document.createElement("div");
+		element.className = "day";
+
+		keyYear = time.getFullYear()
+		keyMonth = time.getMonth() + 1;
+		keyDay = time.getDate();
+
+		element.innerText = daysOfTheWeek[time.getDay()] + ", " + monthNames[keyMonth - 1] + " " + keyDay + ", " + keyYear;
+		time = new Date(keyYear, keyMonth - 1, keyDay);
+		time.setMilliseconds(9);
+		super(time, element);
+		dayDividers[keyYear][keyMonth][keyDay] = this;
+	}
+}
+
+function getDayDivider(day) {
+	keyYear = day.getFullYear()
+	keyMonth = day.getMonth() + 1;
+	keyDay = day.getDate();
+	if (dayDividers[keyYear] === undefined) {
+		dayDividers[keyYear] = {};
+	}
+	if (dayDividers[keyYear][keyMonth] === undefined) {
+		dayDividers[keyYear][keyMonth] = {};
+	}
+	if (dayDividers[keyYear][keyMonth][keyDay] === undefined) {
+		return new DayDivider(day);
+	}
+	return dayDividers[keyYear][keyMonth][keyDay];
+}
+
+function jumpTo(time) {
+	alert(time);
 }
 
 var initializedTimeline = false;
