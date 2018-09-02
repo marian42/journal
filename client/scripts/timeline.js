@@ -3,6 +3,8 @@ var container = $('.timeline')[0];
 var dayDividers = {}
 var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+var loadMoreIntervals = [];
+
 
 Date.prototype.format = function() {
   var mm = this.getMonth() + 1;
@@ -78,6 +80,10 @@ class LoadMore extends TimelineElement {
 		this.counterpart = null;
 		var instance = this;
 		element.addEventListener("click", function() { instance.load(); });
+
+		if (forward) {
+			loadMoreIntervals.push(this);
+		}
 	}
 
 	setCounterpart(other) {
@@ -107,11 +113,10 @@ class LoadMore extends TimelineElement {
 			var newLoadMore = null;
 			if (this.forward) {
 				var t = new Date(data[data.length - 1].time);
-				t.setMilliseconds(t.getMilliseconds() + 2);
+				t.setMilliseconds(t.getMilliseconds() + 12);
 				newLoadMore = new LoadMore(t, true);
 			} else {
 				var t = new Date(data[0].time);
-				t.setMilliseconds(t.getMilliseconds() - 2);
 				newLoadMore = new LoadMore(t, false);
 			}
 			newLoadMore.setCounterpart(this.counterpart);
@@ -121,6 +126,35 @@ class LoadMore extends TimelineElement {
 	load() {
 		var instance = this;
 		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward}, success: function(data) { instance.replace(data); }});
+	}
+
+	remove() {
+		super.remove(this);
+		if (this.forward) {
+			loadMoreIntervals.splice(loadMoreIntervals.indexOf(this), 1);
+		}
+	}
+
+	contains(time) {
+		if (this.forward) {
+			return this.time < time && this.counterpart.time > time;
+		} else {
+			return this.time > time && this.counterpart.time < time;
+		}
+	}
+
+	split(time) {
+		var start = this.forward ? this : this.counterpart;
+		var end = this.forward ? this.counterpart : this;
+
+		var timeForward = new Date(time);
+		timeForward.setMilliseconds(timeForward.getMilliseconds() + 12);
+		var newForward = new LoadMore(timeForward, true);
+		var newBackward = new LoadMore(time, false);
+		newForward.setCounterpart(end);
+		newBackward.setCounterpart(start);
+
+		return newForward;
 	}
 }
 
@@ -158,7 +192,22 @@ function getDayDivider(day) {
 }
 
 function jumpTo(time) {
-	alert(time);
+	keyYear = time.getFullYear()
+	keyMonth = time.getMonth() + 1;
+	keyDay = time.getDate();
+	if (dayDividers[keyYear] != undefined && dayDividers[keyYear][keyMonth] != undefined && dayDividers[keyYear][keyMonth][keyDay] != undefined) {
+		dayDividers[keyYear][keyMonth][keyDay].element.scrollIntoView();
+		return;
+	}
+
+	for (var item of loadMoreIntervals) {
+		if (item.contains(time)) {
+			var start = item.split(time);
+			start.element.scrollIntoView();
+			start.load();
+			return;
+		}
+	}
 }
 
 var initializedTimeline = false;

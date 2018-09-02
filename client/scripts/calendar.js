@@ -66,8 +66,13 @@ function buildCalendar(data) {
 				count = data.data[keyYear][keyMonth][keyDay];
 			}
 		setColor(element, count);
-		var dayCopy = new Date(day);
-		element.addEventListener('click', function() { jumpTo(dayCopy); });
+
+		if (count != 0) {
+			(function() {
+				var dayCopy = new Date(day.getTime());
+				element.addEventListener('click', function() { jumpTo(dayCopy); });
+			}());
+		}
 
 		if (day.getDay() == 6) {
 			addElement("br", "linebreak");
