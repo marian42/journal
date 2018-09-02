@@ -10,16 +10,16 @@ class Tag(Model):
 	
 	@staticmethod
 	def get_tag(value):
-		if Tag._items == None:
+		if Tag._items is None:
 			Tag._items = {}
 			tags = Tag.select()
 			for tag in tags:
 				Tag._items[tag.name] = tag
 		
-		if Tag._items.has_key(value):
+		if value in Tag._items:
 			return Tag._items[value]
 		else:
-			tag = Tag(name = value)
+			tag = Tag(name=value)
 			Tag._items[value] = tag
 			tag.save()
 			return tag

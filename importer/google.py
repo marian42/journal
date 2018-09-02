@@ -6,7 +6,6 @@ import json
 import datetime
 import dateutil
 
-
 def read_calendar(directory):
 	calendar_directory = directory + "Calendar/"
 	

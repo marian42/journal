@@ -10,12 +10,12 @@ class Key(Model):
 	
 	@staticmethod
 	def get_key(value):
-		if Key._items == None:
+		if Key._items is None:
 			Key._items = {}
 			keys = Key.select()
 			for key in keys:
 				Key._items[key.name] = key
-		if Key._items.has_key(value):
+		if value in Key._items:
 			return Key._items[value]
 		else:
 			key = Key(name=value)

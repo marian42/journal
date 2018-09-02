@@ -28,16 +28,16 @@ class Event(Model):
 			return result
 	
 	def get_tags(self):
-		from tagtoevent import TagToEvent
-		from tag import Tag
+		from model.tagtoevent import TagToEvent
+		from model.tag import Tag
 		query = Tag.select(Tag.name)\
 			.join(TagToEvent, on=(Tag.id == TagToEvent.tag_id))\
 			.where(TagToEvent.event_id == self.id)
 		return [tag.name for tag in query]
 	
 	def add_tag(self, tag_name):
-		from tag import Tag
-		from tagtoevent import TagToEvent
+		from model.tag import Tag
+		from model.tagtoevent import TagToEvent
 		
 		if any(tte.tag.name == tag_name for tte in self.tags):
 			return
