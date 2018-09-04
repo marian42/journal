@@ -113,12 +113,12 @@ body {
 }
 
 .event {
-	padding: 6px;
+	padding: 8px;
 }
 
 .timeline .day {
 	padding: 6px;
-	padding-top: 15px;
+	padding-top: 20px;
 	font-size: 18px;
 	font-weight: bold;
 }
@@ -130,4 +130,18 @@ body {
 
 .timeline .event .summary {
 	padding-left: 50px;
+}
+
+.tags {
+	padding-left: 50px;
+	padding-top: 6px;
+}
+
+.tags .tag {
+	background-color: #F0F0F0;
+	color: #3B3B3B;
+	padding: 3px 8px;
+	margin-right: 8px;
+	border-radius: 3px;
+	font-size: 12px;
 }

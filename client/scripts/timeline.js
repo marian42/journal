@@ -63,6 +63,17 @@ class Event extends TimelineElement {
 		messageDiv.className = "summary";
 		element.appendChild(messageDiv);
 
+		var tagsDiv = document.createElement("div");
+		tagsDiv.className = "tags";
+		element.appendChild(tagsDiv);
+
+		for (var tag of dict.tags) {
+			var tagSpan = document.createElement("span");
+			tagSpan.className = "tag";
+			tagSpan.innerText = tag;
+			tagsDiv.appendChild(tagSpan);
+		}
+
 		getDayDivider(time);
 		time.setMilliseconds(10);
 		super(time, element);
@@ -140,9 +151,9 @@ class LoadMore extends TimelineElement {
 
 	contains(time) {
 		if (this.forward) {
-			return this.time < time && this.counterpart.time > time;
+			return this.time <= time && this.counterpart.time > time;
 		} else {
-			return this.time > time && this.counterpart.time < time;
+			return this.time > time && this.counterpart.time <= time;
 		}
 	}
 

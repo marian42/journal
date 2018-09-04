@@ -37,7 +37,8 @@ def get_days():
 def to_dict(event):
 	return {
 		"summary": event.summary,
-		"time": event.get_time().timestamp() * 1000
+		"time": event.get_time().timestamp() * 1000,
+		"tags": event.get_tags()
 	}
 
 
