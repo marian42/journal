@@ -138,10 +138,32 @@ body {
 }
 
 .tags .tag {
-	background-color: #F0F0F0;
-	color: #3B3B3B;
+	background-color: #F7F7F7;
+	color: #838383;
 	padding: 3px 8px;
 	margin-right: 8px;
 	border-radius: 3px;
 	font-size: 12px;
+	cursor: pointer;
+}
+
+.event:hover .tag {
+	background-color: #F0F0F0;
+	color: #292929;
+}
+
+.tags a {
+	width: 200px;
+    overflow-x: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    position: relative;
+    top: 3px;
+    color: #838383;
+}
+
+.event:hover a {
+	width: auto;
+    color: #0000EE;
 }

@@ -38,7 +38,8 @@ def to_dict(event):
 	return {
 		"summary": event.summary,
 		"time": event.get_time().timestamp() * 1000,
-		"tags": event.get_tags()
+		"tags": event.get_tags(),
+		"url": event.get_value("url")
 	}
 
 

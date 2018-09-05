@@ -74,6 +74,13 @@ class Event extends TimelineElement {
 			tagsDiv.appendChild(tagSpan);
 		}
 
+		if (dict.url != null) {
+			var tagSpan = document.createElement("a");
+			tagSpan.innerText = dict.url;
+			tagSpan.href = dict.url;
+			tagsDiv.appendChild(tagSpan);
+		}
+
 		getDayDivider(time);
 		time.setMilliseconds(10);
 		super(time, element);
@@ -229,4 +236,5 @@ function initializeTimeline(start, end) {
 	loadMoreStart = new LoadMore(new Date(start), true);
 	loadMoreEnd = new LoadMore(new Date(end), false);
 	loadMoreStart.setCounterpart(loadMoreEnd);
+	loadMoreEnd.load(true);
 }

@@ -4,6 +4,7 @@ import datetime
 
 from database import db
 
+
 class Event(Model):
 	__tablename__ = 'events'
 	
@@ -17,7 +18,6 @@ class Event(Model):
 		if type(self.time) == datetime.datetime:
 			return self.time
 		else:
-			#return dateutil.parser.parse(self.time)
 			result = None
 			try:
 				result = dateutil.parser.parse(self.time)
@@ -56,6 +56,15 @@ class Event(Model):
 		else:
 			result = "[" + result + "]" + " " * (length - 2 - len(result))
 		return result
+	
+	def get_value(self, key):
+		from model.key import Key
+		from model.keyvaluepair import KeyValuePair
+		
+		try:
+			return KeyValuePair.get((KeyValuePair.key == Key.get_key(key)) & (KeyValuePair.event == self)).value
+		except DoesNotExist:
+			return None
 	
 	def to_string(self):
 		return self.get_time().strftime("%Y-%m-%d %H:%M") + " " + Event.format_tags(self.get_tags()) + " " + self.summary
