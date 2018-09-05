@@ -85,6 +85,45 @@ class Event extends TimelineElement {
 		time.setMilliseconds(10);
 		super(time, element);
 		this.data = dict;
+
+		this.id = dict.id;
+		this.expanded = false;
+		var instance = this;
+		messageDiv.addEventListener("click", function() { instance.click(); });
+	}
+
+	click() {
+		if (this.expanded) {
+			this.content.style.display = "none";
+			this.expanded = false;
+		} else {
+			if (this.content != null) {
+				this.content.style.display = "block";
+				this.expanded = true;
+			} else {
+				var instance = this;
+				$.ajax({url: "/api/details", data: {"id": this.id }, success: function(data) { instance.showDetails(data); }});
+			}
+		}
+	}
+
+	showDetails(data) {
+		var container = document.createElement("div");
+		container.className = "details";
+		this.element.appendChild(container);
+
+		for (var key in data) {
+			var keyElement = document.createElement("div");
+			keyElement.className = "key";
+			keyElement.innerText = key;
+			container.appendChild(keyElement);
+			var valueElement = document.createElement("div");
+			valueElement.className = "value";
+			valueElement.innerText = data[key];
+			container.appendChild(valueElement);
+		}
+		this.expanded = true;
+		this.content = container;
 	}
 }
 

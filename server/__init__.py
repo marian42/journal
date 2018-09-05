@@ -36,6 +36,7 @@ def get_days():
 
 def to_dict(event):
 	return {
+		"id": event.id,
 		"summary": event.summary,
 		"time": event.get_time().timestamp() * 1000,
 		"tags": event.get_tags(),
@@ -48,7 +49,6 @@ def get_events():
 	time = request.args.get('time')
 	before = request.args.get('before') == 'true'
 	date = datetime.datetime.fromtimestamp(float(time) / 1000.0)
-	print(date)
 	n = 100
 	if before:
 		query = Event.select().where(Event.time < date).order_by(Event.time.desc())[:n]
@@ -59,8 +59,19 @@ def get_events():
 		result = reversed(result)
 	
 	return jsonify(list(result))
-		
+
+
+@app.route("/api/details")
+def get_data():
+	event_id = request.args.get('id')
 	
+	query = KeyValuePair.select().where(KeyValuePair.event == event_id)
+	
+	result = {}
+	for item in query:
+		result[item.key.name] = item.value
+	
+	return jsonify(result)
 	
 	
 

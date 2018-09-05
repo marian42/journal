@@ -114,6 +114,7 @@ body {
 
 .event {
 	padding: 8px;
+	cursor: default;
 }
 
 .timeline .day {
@@ -161,9 +162,33 @@ body {
     position: relative;
     top: 3px;
     color: #838383;
+	white-space: nowrap;
 }
 
 .event:hover a {
 	width: auto;
     color: #0000EE;
+}
+
+.details {
+	background-color: #F4F4F4;
+	padding: 10px;
+	padding-top: 16px;
+	margin-top: 20px;
+	margin-left: 50px;
+	max-width: 800px;
+}
+
+.details .key {
+	position: absolute;
+	color: #545454;
+	display: block;
+	width: 120px;
+	text-align: right;
+}
+
+.details .value {
+	margin-bottom: 8px;
+    margin-left: 130px;
+    min-height: 16px;
 }
