@@ -86,6 +86,14 @@ def get_preview(id):
 	image.create_thumbnail()
 	filename = image.get_thumbnail_filename()
 	return send_file(os.path.join(os.getcwd(), filename))
+
+
+@app.route("/api/image/<id>")
+def get_image(id):
+	image = Image.get(Image.id == id)
+	filename = image.file
+	print(filename)
+	return send_file(os.path.join(os.getcwd(), filename))
 	
 
 if __name__ == '__main__':

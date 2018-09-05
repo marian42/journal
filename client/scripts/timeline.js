@@ -86,9 +86,12 @@ class Event extends TimelineElement {
 			imagesDiv.className = "images";
 			element.appendChild(imagesDiv);
 			for (var id of dict.images) {
+				var link = document.createElement("a");
+				link.href = "/api/image/" + id;
 				var image = document.createElement("img");
 				image.src = "/api/preview/" + id;
-				imagesDiv.appendChild(image);
+				link.appendChild(image);
+				imagesDiv.appendChild(link);
 			}
 		}
 
