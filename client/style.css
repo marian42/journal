@@ -192,3 +192,14 @@ body {
     margin-left: 130px;
     min-height: 16px;
 }
+
+.images {
+	padding: 16px;
+	padding-left: 50px;
+	padding-bottom: 2px;
+}
+
+.images img {
+	max-width: 128px;
+	max-height: 128px;
+}

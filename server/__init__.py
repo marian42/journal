@@ -1,7 +1,9 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask import send_file, send_from_directory
 from peewee import *
+import os
 
 from database import db
 
@@ -35,12 +37,16 @@ def get_days():
 
 
 def to_dict(event):
+	image_query = Image.select().where(Image.event == event)
+	images = [image.id for image in image_query]
+	
 	return {
 		"id": event.id,
 		"summary": event.summary,
 		"time": event.get_time().timestamp() * 1000,
 		"tags": event.get_tags(),
-		"url": event.get_value("url")
+		"url": event.get_value("url"),
+		"images": images
 	}
 
 
@@ -72,7 +78,14 @@ def get_data():
 		result[item.key.name] = item.value
 	
 	return jsonify(result)
-	
+
+
+@app.route("/api/preview/<id>")
+def get_preview(id):
+	image = Image.get(Image.id == id)
+	image.create_thumbnail()
+	filename = image.get_thumbnail_filename()
+	return send_file(os.path.join(os.getcwd(), filename))
 	
 
 if __name__ == '__main__':

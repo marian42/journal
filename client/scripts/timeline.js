@@ -81,6 +81,17 @@ class Event extends TimelineElement {
 			tagsDiv.appendChild(tagSpan);
 		}
 
+		if (dict.images.length != 0) {
+			var imagesDiv = document.createElement("div");
+			imagesDiv.className = "images";
+			element.appendChild(imagesDiv);
+			for (var id of dict.images) {
+				var image = document.createElement("img");
+				image.src = "/api/preview/" + id;
+				imagesDiv.appendChild(image);
+			}
+		}
+
 		getDayDivider(time);
 		time.setMilliseconds(10);
 		super(time, element);
