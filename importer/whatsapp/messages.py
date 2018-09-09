@@ -9,6 +9,7 @@ media_types = {
 	"application": "PDF"
 }
 
+
 class Message(Model):
 	_id = IntegerField(primary_key=True)
 	key_remote_jid = TextField()
@@ -26,14 +27,14 @@ class Message(Model):
 	
 	def get_text(self):
 		if self.media_caption is not None:
-			return self.media_caption.encode("utf-8")
+			return self.media_caption
 		elif self.data is not None:
-			return self.data.encode("utf-8")
+			return self.data
 		elif self.media_mime_type is not None:
-			type = self.media_mime_type.split("/")[0]
-			return media_types[type]
+			mime_type = self.media_mime_type.split("/")[0]
+			return media_types[mime_type]
 		else:
-			return ""
+			return "Image"
 	
 	def is_sent(self):
 		return self.key_from_me == 1

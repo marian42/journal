@@ -15,7 +15,7 @@ class Contact(Model):
 		if self.display_name is None:
 			return ""
 		else:
-			return self.display_name.encode("utf-8").strip()
+			return self.display_name.strip()
 	
 	class Meta:
 		database = database
