@@ -4,7 +4,6 @@ db = SqliteDatabase('journal.db')
 
 def init():
 	from model.event import Event
-	from model.image import Image
 	from model.key import Key
 	from model.keyvaluepair import KeyValuePair
 	from model.tag import Tag

@@ -5,20 +5,18 @@ from flask import send_file, send_from_directory
 from peewee import *
 import os
 
-from database import db
+import database
 
 from model.event import Event
-from model.image import Image
-from model.key import Key
 from model.keyvaluepair import KeyValuePair
-from model.tag import Tag
-from model.tagtoevent import TagToEvent
 from model.image import Image
 
 import datetime
 
 from server.calendar_graph import CalendarGraph
 
+
+database.init()
 app = Flask(__name__, static_folder='../client/', static_url_path='')
 
 
@@ -26,7 +24,9 @@ app = Flask(__name__, static_folder='../client/', static_url_path='')
 def root():
 	return app.send_static_file('index.html')
 
+
 graph = None
+
 
 @app.route("/api/days")
 def get_days():

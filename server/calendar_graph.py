@@ -7,6 +7,8 @@ class CalendarGraph:
 	def __init__(self):
 		self.data = {}
 		self.max = None
+		self.first = None
+		self.last = None
 		
 		cursor = db.execute_sql(
 			'SELECT strftime("%Y.%m.%d", "t1"."time") AS "day", COUNT("t1"."id") AS "count" FROM "event" AS "t1" GROUP BY "day"')

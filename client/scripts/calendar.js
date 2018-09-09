@@ -28,6 +28,10 @@ function buildCalendar(data) {
 	var freshLine = true;
 	var showMonth = false;
 
+	if (data.first == null) {
+		return;
+	}
+
 	var day = new Date(data.first[0], data.first[1] - 1, data.first[2]);
 	var end = new Date(data.last[0], data.last[1] - 1, data.last[2]);
 
