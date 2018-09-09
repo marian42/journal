@@ -8,6 +8,7 @@ class Image(Model):
 	__tablename__ = 'images'
 	
 	event = ForeignKeyField(Event, backref='images')
+	time = DateTimeField()
 	file = CharField()
 	
 	def get_thumbnail_filename(self):

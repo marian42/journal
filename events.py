@@ -15,9 +15,9 @@ def add(summary, time, tags = [], kvps = {}, hash = None, latitude = None, longi
 		db_key = Key.get_key(key)
 		kvp = KeyValuePair(key = db_key, value = kvps[key], event = result)
 		kvp.save(force_insert=True)
-	for image_path in images:
-		image = Image(event = result, file = image_path)
+	for image_time, image_path in images:
+		image = Image(event = result, time = image_time, file = image_path)
 		image.save()
 	
-	#print "Add: " + time.strftime("%Y-%m-%d %H:%M") + " " + Event.format_tags(tags) + " " + summary
+	#print("Add: " + time.strftime("%Y-%m-%d %H:%M") + " " + Event.format_tags(tags) + " " + summary)
 		
