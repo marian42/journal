@@ -37,7 +37,7 @@ def get_days():
 
 
 def to_dict(event):
-	image_query = Image.select().where(Image.event == event)
+	image_query = Image.select().where(Image.event == event).order_by(Image.time)
 	images = [image.id for image in image_query]
 	
 	return {
