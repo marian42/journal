@@ -25,6 +25,7 @@ def import_all():
 	importer.wordpress.import_wordpress()
 	importer.gitrepo.import_repositories()
 	importer.linkedin.import_linkedin()
+	importer.wordpress.import_wordpress()
 
 
 if __name__ == "__main__":

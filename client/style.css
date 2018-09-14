@@ -115,6 +115,7 @@ body {
 .event {
 	padding: 8px;
 	cursor: default;
+	position: relative;
 }
 
 .timeline .day {
@@ -130,11 +131,11 @@ body {
 }
 
 .timeline .event .summary {
-	padding-left: 50px;
+	padding-left: 75px;
 }
 
 .tags {
-	padding-left: 50px;
+	padding-left: 75px;
 	padding-top: 6px;
 }
 
@@ -151,6 +152,15 @@ body {
 .event:hover .tag {
 	background-color: #F0F0F0;
 	color: #292929;
+}
+
+.event .icon {
+	background-size: 20px;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	left: 55px;
+	top: 6px;
 }
 
 .tags a {
@@ -175,7 +185,7 @@ body {
 	padding: 10px;
 	padding-top: 16px;
 	margin-top: 20px;
-	margin-left: 50px;
+	margin-left: 75px;
 	max-width: 800px;
 }
 
@@ -195,7 +205,7 @@ body {
 
 .images {
 	padding: 16px;
-	padding-left: 50px;
+	padding-left: 75px;
 	padding-bottom: 2px;
 	margin-bottom: -10px;
 }

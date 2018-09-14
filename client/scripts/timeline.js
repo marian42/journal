@@ -4,6 +4,7 @@ var dayDividers = {}
 var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var loadMoreIntervals = [];
+var icons = ["whatsapp", "paypal", "money", "photo", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress"];
 
 
 Date.prototype.format = function() {
@@ -57,6 +58,17 @@ class Event extends TimelineElement {
 		timeDiv.innerText = time.formatTime();
 		timeDiv.className = "time";
 		element.appendChild(timeDiv);
+
+		for (var tag of dict.tags) {
+			if (icons.includes(tag)) {
+				var iconDiv = document.createElement("div");
+				iconDiv.className = "icon";
+				iconDiv.style.backgroundImage = "url(/icons/" + tag + ".png)";
+				element.appendChild(iconDiv);
+				break;
+			}
+		}
+
 
 		var messageDiv = document.createElement("div");
 		messageDiv.innerText = dict.summary;
