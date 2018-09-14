@@ -9,6 +9,7 @@ import importer.steam
 import importer.twitter
 import importer.wordpress
 import importer.gitrepo
+import importer.linkedin
 
 
 def import_all():
@@ -23,6 +24,8 @@ def import_all():
 	importer.twitter.import_twitter()
 	importer.wordpress.import_wordpress()
 	importer.gitrepo.import_repositories()
+	importer.linkedin.import_linkedin()
+
 
 if __name__ == "__main__":
 	import_all()

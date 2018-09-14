@@ -5,6 +5,7 @@ import datetime
 
 currencies = {"EUR": "\u20AC", "USD": "$"}
 
+
 def import_money(directory="data/money/"):
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
