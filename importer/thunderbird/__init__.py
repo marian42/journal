@@ -1,10 +1,11 @@
 from peewee import *
-import thunderbird_db
-from folders import Folder
-from message import Message
-from message_content import MessageContent
+import importer.thunderbird.thunderbird_db
+from importer.thunderbird.folders import Folder
+from importer.thunderbird.message import Message
+from importer.thunderbird.message_content import MessageContent
 import events
 from database import db
+
 
 def get_short_recipients(value):
 	result = []
@@ -47,6 +48,7 @@ def get_short_recipients(value):
 	else:
 		return ", ".join(result[:-1]) + " and " + result[-1]
 
+
 def get_folder_ids():
 	sent_folder_names = ["sent", "gesendet"]
 	
@@ -57,6 +59,7 @@ def get_folder_ids():
 			ids.append(folder.id)
 			
 	return ids
+
 
 def read_messages(query, replies):
 	tags = ["email"] + (["reply"] if replies else [])
@@ -70,6 +73,7 @@ def read_messages(query, replies):
 		summary = ("Replied to " if replies else "Sent an email to ") + get_short_recipients(recipients) + ": " + subject
 		
 		events.add(summary, time, tags, kvps, "mail-" + str(item.id))
+
 
 def import_thunderbird(directory="data/thunderbird/"):
 	thunderbird_db.db.init(directory + "global-messages-db.sqlite")

@@ -4,9 +4,11 @@ import json
 import datetime
 import os
 
+
 def load_to_json(filename):
 	json_data = open(filename).read()
 	return json.loads(json_data)
+
 
 def read_app_posts(directory):
 	data = load_to_json(directory + "apps/posts_from_apps.json")
@@ -20,22 +22,25 @@ def read_app_posts(directory):
 			app_name = title[title.index("via") + 4 : -1]
 		
 		kvps = {"message": message, "title": title, "app": app_name}
-		if attachment_data.has_key("url"):
+		if "url" in attachment_data:
 			kvps["url"] = attachment_data["url"]
 		events.add("Facebook post via " + app_name + ": " + message, time, ["facebook", "post", "app"], kvps)
+
 
 def read_app_installs(directory):
 	data = load_to_json(directory + "apps/installed_apps.json")
 	for item in data["installed_apps"]:
 		events.add("Added Facebook app " + item["name"] + ".", datetime.datetime.fromtimestamp(item["time_added"]), ["facebook", "app"], {"app": item["name"]})
-		
+
+
 def read_comments(directory):
 	data = load_to_json(directory + "comments/comments.json")
 	for comment in data["comments"]:
 		time = datetime.datetime.fromtimestamp(comment["timestamp"])
 		message = comment["data"][0]["comment"]["comment"]
 		events.add("Facebook: " + comment["title"], time, ["facebook", "comment"], {"message": message})
-		
+
+
 def read_events(directory):
 	data = load_to_json(directory + "events/event_responses.json")
 	for event in data["event_responses"]["events_joined"]:
@@ -57,6 +62,7 @@ def read_friends(directory):
 		name = friend["name"]
 		events.add("Added Facebook friend " + name + ".", time, ["facebook", "friend"], {"name": name})
 
+
 def create_conversation_event(title, message_count, time, participants, history, first):
 	kvps = {"participants": participants, "message": history}
 	if first:
@@ -70,16 +76,17 @@ def create_conversation_event(title, message_count, time, participants, history,
 				"s" if message_count > 1 else "") + " with " + title + ".",
 			time, ["facebook", "message"], kvps)
 
+
 def read_messages(directory):
 	message_directory = directory + "messages/"
 	for conversation in [os.path.join(message_directory, name) for name in os.listdir(message_directory) if os.path.isdir(os.path.join(message_directory, name)) and name != "stickers_used"]:
 		data = load_to_json(conversation + "/message.json")
-		if not data.has_key("title"):
+		if "title" not in data:
 			continue
 		title = data["title"]
 		participants = [title]
-		if data.has_key("participants"):
-			participants =  data["participants"]
+		if "participants" in data:
+			participants = data["participants"]
 		messages = data["messages"]
 		session_start_time = None
 		last_message_time = None
@@ -88,7 +95,7 @@ def read_messages(directory):
 		session_count = 0
 		
 		for message in reversed(messages):
-			if message.has_key("content"):
+			if "content" in message:
 				message_time = datetime.datetime.fromtimestamp(message["timestamp"])
 				if session_start_time is None:
 					session_start_time = message_time
@@ -102,19 +109,21 @@ def read_messages(directory):
 				last_message_time = message_time
 				message_count += 1
 				history += message["sender_name"] + ": " + message["content"] + "\n"
-			if message.has_key("photos") and not message["sender_name"] in participants:
+			time = datetime.datetime.fromtimestamp(message["timestamp"])
+			if "photos" in message and not message["sender_name"] in participants:
 				events.add("Sent " + (str(len(message["photos"])) + " images" if len(message["photos"]) > 1 else "an image") + " to " + title + ".",
-				           datetime.datetime.fromtimestamp(message["timestamp"]),
-				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)}, images=[directory + photo["uri"] for photo in message["photos"]])
-			if message.has_key("photos") and message["sender_name"] in participants:
+				           time,
+				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)}, images=[(time, directory + photo["uri"]) for photo in message["photos"]])
+			if "photos" in message and "sender_name" in message in participants:
 				events.add("Received " + (str(len(message["photos"])) + " images" if len(
-					message["photos"]) > 1 else "an image") + " from " +  message["sender_name"] + ".",
-				           datetime.datetime.fromtimestamp(message["timestamp"]),
+					message["photos"]) > 1 else "an image") + " from " + message["sender_name"] + ".",
+				           time,
 				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)},
-				           images=[directory + photo["uri"] for photo in message["photos"]])
+				           images=[(time, directory + photo["uri"]) for photo in message["photos"]])
 				
 		create_conversation_event(title, message_count, session_start_time, ", ".join(participants), history, session_count == 0)
-		
+
+
 def read_photos(directory):
 	photo_directory = directory + "photos/album/"
 	for album_file in [os.path.join(photo_directory, name) for name in os.listdir(photo_directory)]:
@@ -123,11 +132,11 @@ def read_photos(directory):
 		for photo in data["photos"]:
 			file = directory + photo["uri"]
 			metadata = photo["media_metadata"]["photo_metadata"]
-			time = datetime.datetime.fromtimestamp(metadata["taken_timestamp"]) if metadata.has_key("taken_timestamp") else datetime.datetime.fromtimestamp(metadata["modified_timestamp"])
+			time = datetime.datetime.fromtimestamp(metadata["taken_timestamp"]) if "taken_timestamp" in metadata else datetime.datetime.fromtimestamp(metadata["modified_timestamp"])
 			
 			tags = ["facebook", "photo"]
 			kvps = {}
-			if metadata.has_key("camera_make") and metadata.has_key("camera_model"):
+			if "camera_make" in metadata and "camera_model" in metadata:
 				camera = metadata["camera_make"] + " " + metadata["camera_model"]
 				tags.append(camera)
 				kvps["camera"] = camera
@@ -137,25 +146,25 @@ def read_photos(directory):
 			           tags,
 			           kvps,
 			           hash=file,
-			           latitude=(metadata["latitude"] if metadata.has_key("latitude") else None),
-			           longitude=(metadata["longitude"] if metadata.has_key("longitude") else None),
-			           images=[file])
+			           latitude=(metadata["latitude"] if "latitude" in metadata else None),
+			           longitude=(metadata["longitude"] if "longitude" in metadata else None),
+			           images=[(time, file)])
 
 
 def import_facebook_data(directory = "data/facebook/"):
 	with db.atomic():
-		print "Reading Facebook app posts..."
+		print("Reading Facebook app posts...")
 		read_app_posts(directory)
 		read_app_installs(directory)
-		print "Reading Facebook comments..."
+		print("Reading Facebook comments...")
 		read_comments(directory)
-		print "Reading Facebook events..."
+		print("Reading Facebook events...")
 		read_events(directory)
-		print "Reading Facebook friends..."
+		print("Reading Facebook friends...")
 		read_friends(directory)
-		print "Reading Facebook messages..."
+		print("Reading Facebook messages...")
 		read_messages(directory)
-		print "Reading Facebook photos..."
+		print("Reading Facebook photos...")
 		read_photos(directory)
 
 

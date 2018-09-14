@@ -1,5 +1,5 @@
 from peewee import *
-from thunderbird_db import db
+from importer.thunderbird.thunderbird_db import db
 import datetime
 
 

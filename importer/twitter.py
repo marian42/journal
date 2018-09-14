@@ -16,8 +16,8 @@ def import_twitter(directory="data/twitter/"):
 			for tweet in data:
 				hash = tweet["id_str"]
 				text = tweet["text"]
-				is_reply = tweet.has_key("in_reply_to_screen_name")
-				is_retweet = tweet.has_key("retweeted_status")
+				is_reply = "in_reply_to_screen_name" in tweet
+				is_retweet = "retweeted_status" in tweet
 				time = dateutil.parser.parse(tweet["created_at"])
 				images = []
 				hashtags = [item["text"] for item in tweet["entities"]["hashtags"]]
@@ -30,7 +30,7 @@ def import_twitter(directory="data/twitter/"):
 					local_address = directory + "img/" + image["id_str"] + "." + extension
 					if not os.path.isfile(local_address):
 						urllib.urlretrieve(url, local_address)
-					images.append(local_address)
+					images.append((time, local_address))
 				
 				if is_retweet:
 					events.add("Retweeted " + tweet["retweeted_status"]["user"]["name"] + ": " + text, time, ["twitter", "retweet"] + hashtags, kvps, hash, images = images)

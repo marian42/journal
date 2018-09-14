@@ -1,5 +1,6 @@
 from peewee import *
-from thunderbird_db import db
+from importer.thunderbird.thunderbird_db import db
+
 
 class Folder(Model):
 	id = IntegerField(primary_key=True)

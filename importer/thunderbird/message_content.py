@@ -1,6 +1,5 @@
 from peewee import *
-from thunderbird_db import db
-import datetime
+from importer.thunderbird.thunderbird_db import db
 
 
 class MessageContent(Model):

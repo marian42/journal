@@ -6,6 +6,7 @@ import json
 import datetime
 import dateutil
 
+
 def read_calendar(directory):
 	calendar_directory = directory + "Calendar/"
 	
@@ -14,16 +15,18 @@ def read_calendar(directory):
 		for event in cal.walk("vevent"):
 			events.add("Google Calendar event: " + event.get("summary"), event.get("dtstart").dt, ["google", "calendar", "event"], kvps={"location":event.get("location")}, hash=event.get("uuid"))
 
+
 def read_locations(directory):
 	data = json.loads(open(directory + "Location History/Location History.json").read())
 	for item in data["locations"]:
 		time = datetime.datetime.fromtimestamp(int(item["timestampMs"]) / 1000)
-		if not item.has_key("latitudeE7"):
+		if "latitudeE7" not in item:
 			continue
 		latitude = item["latitudeE7"] * 1e-7
 		longitude = item["longitudeE7"] * 1e-7
 		events.add("Google Location History", time, ["google", "location"], latitude=latitude, longitude=longitude)
-		
+
+
 def read_saved_places(directory):
 	data = json.loads(open(directory + "Maps (your places)/Saved Places.json").read())
 	for place in data["features"]:
@@ -31,10 +34,10 @@ def read_saved_places(directory):
 		url = properties["Google Maps URL"]
 		latitude = 0
 		longitude = 0
-		if properties["Location"].has_key("Latitude"):
+		if "Latitude" in properties["Location"]:
 			latitude = float(properties["Location"]["Latitude"])
 			longitude = float(properties["Location"]["Longitude"])
-		elif properties["Location"].has_key("Geo Coordinates"):
+		elif "Geo Coordinates" in properties["Location"]:
 			latitude = float(properties["Location"]["Geo Coordinates"]["Latitude"])
 			longitude = float(properties["Location"]["Geo Coordinates"]["Longitude"])
 		name = properties["Title"]
@@ -47,6 +50,7 @@ def import_google(directory="data/google/"):
 		read_calendar(directory)
 		#read_locations(directory)
 		read_saved_places(directory)
+
 
 if __name__ == "__main__":
 	import_google()

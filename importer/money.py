@@ -21,7 +21,7 @@ def import_money(directory="data/money/"):
 				amount_positive = amount[0] != "-"
 				amount_absolute = amount.replace("-", "")
 				currency = data[9]
-				if currencies.has_key(currency):
+				if currency in currencies:
 					currency = currencies[currency]
 				kvps = {"account": account, "message": message, "recipient-name": recipient_name, "recipient-account": recipient_account, "recipient-bank": recipient_bank, "amount": amount}
 				if len(recipient_name) == 0:
