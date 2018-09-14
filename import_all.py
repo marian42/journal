@@ -10,6 +10,7 @@ import importer.twitter
 import importer.wordpress
 import importer.gitrepo
 import importer.linkedin
+import importer.kickstarter
 
 
 def import_all():
@@ -26,6 +27,7 @@ def import_all():
 	importer.gitrepo.import_repositories()
 	importer.linkedin.import_linkedin()
 	importer.wordpress.import_wordpress()
+	importer.kickstarter.import_kickstarter()
 
 
 if __name__ == "__main__":
