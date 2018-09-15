@@ -124,7 +124,7 @@ def create_like_event(likes):
 	if len(likes) == 1:
 		events.add("Liked video: " + likes[0].title, likes[0].time, ["youtube", "like"], kvps = {"title": likes[0].title, "url": likes[0].url})
 	else:
-		events.add("Liked " + str(len(likes)) + " videos :" + likes[0].title + " and " + str(len(likes) - 1) + (" others." if len(likes) > 2 else " other."), likes[0].time, ["youtube", "like"],
+		events.add("Liked " + str(len(likes)) + " videos: " + likes[0].title + " and " + str(len(likes) - 1) + (" others." if len(likes) > 2 else " other."), likes[0].time, ["youtube", "like"],
 			kvps = {"titles": "\n".join([like.title for like in likes]), "url": likes[0].url, "urls": "\n".join([like.url for like in likes])})
 
 
