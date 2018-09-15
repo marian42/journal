@@ -4,7 +4,7 @@ var dayDividers = {}
 var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var loadMoreIntervals = [];
-var icons = ["whatsapp", "paypal", "money", "photo", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter"];
+var icons = ["whatsapp", "paypal", "money", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter", "photo", "youtube"];
 
 
 Date.prototype.format = function() {

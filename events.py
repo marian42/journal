@@ -6,6 +6,7 @@ import database as db
 
 db.init()
 
+
 def add(summary, time, tags = [], kvps = {}, hash = None, latitude = None, longitude = None, images = []):
 	result = Event(summary = summary, time = time, latitude = latitude, longitude = longitude, hash = hash)
 	result.save()
@@ -18,6 +19,3 @@ def add(summary, time, tags = [], kvps = {}, hash = None, latitude = None, longi
 	for image_time, image_path in images:
 		image = Image(event = result, time = image_time, file = image_path)
 		image.save()
-	
-	#print("Add: " + time.strftime("%Y-%m-%d %H:%M") + " " + Event.format_tags(tags) + " " + summary)
-		
