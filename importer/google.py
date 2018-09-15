@@ -168,8 +168,8 @@ def read_youtube_playlists(directory):
 def import_google(directory="data/google/"):
 	with db.atomic():
 		read_calendar(directory)
-		read_locations(directory)
-		#read_saved_places(directory)
+		#read_locations(directory)
+		read_saved_places(directory)
 		read_youtube_uploads(directory)
 		read_youtube_subscriptions(directory)
 		read_youtube_favorites(directory)
