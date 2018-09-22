@@ -5,6 +5,8 @@ import dateutil
 
 
 def import_kickstarter(directory = "data/kickstarter/"):
+	events.prepare_import(8)
+	print("Importing Kickstarter pledges...")
 	with db.atomic():
 		file = open(directory + "backed_projects.json", encoding = "utf8")
 		data = json.load(file)
@@ -21,7 +23,7 @@ def import_kickstarter(directory = "data/kickstarter/"):
 				"currency": project["project_currency"]
 			}
 			
-			events.add(summary, time, ["kickstarter"], kvps, hash)
+			events.add(summary, time, ["kickstarter"], kvps)
 
 
 if __name__ == "__main__":

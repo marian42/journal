@@ -7,6 +7,8 @@ import urllib
 
 
 def import_twitter(directory="data/twitter/"):
+	events.prepare_import(1)
+	print("Importing tweets...")
 	with db.atomic():
 		tweets_directory = directory + "data/js/tweets/"
 		
@@ -14,14 +16,14 @@ def import_twitter(directory="data/twitter/"):
 			lines = open(tweet_file).read().split("\n")
 			data = json.loads("\n".join(lines[1:]))
 			for tweet in data:
-				hash = tweet["id_str"]
+				id = tweet["id_str"]
 				text = tweet["text"]
 				is_reply = "in_reply_to_screen_name" in tweet
 				is_retweet = "retweeted_status" in tweet
 				time = dateutil.parser.parse(tweet["created_at"])
 				images = []
 				hashtags = [item["text"] for item in tweet["entities"]["hashtags"]]
-				kvps = {"text": text, "url": "https://twitter.com/" + tweet["user"]["screen_name"] + "/status/" + hash}
+				kvps = {"text": text, "url": "https://twitter.com/" + tweet["user"]["screen_name"] + "/status/" + id}
 				
 				for image in tweet["entities"]["media"]:
 					url = image["media_url_https"]
@@ -33,12 +35,11 @@ def import_twitter(directory="data/twitter/"):
 					images.append((time, local_address))
 				
 				if is_retweet:
-					events.add("Retweeted " + tweet["retweeted_status"]["user"]["name"] + ": " + text, time, ["twitter", "retweet"] + hashtags, kvps, hash, images = images)
+					events.add("Retweeted " + tweet["retweeted_status"]["user"]["name"] + ": " + text, time, ["twitter", "retweet"] + hashtags, kvps, images = images)
 				elif is_reply:
-					events.add("Replied to " + tweet["in_reply_to_screen_name"] + ": " + text, time, ["twitter", "reply"] + hashtags, kvps, hash, images=images)
+					events.add("Replied to " + tweet["in_reply_to_screen_name"] + ": " + text, time, ["twitter", "reply"] + hashtags, kvps, images=images)
 				else:
-					events.add("Tweet: " + text, time, ["twitter", "tweet"] + hashtags, kvps, hash, images=images)
-				
+					events.add("Tweet: " + text, time, ["twitter", "tweet"] + hashtags, kvps, images=images)
 				
 
 if __name__ == "__main__":

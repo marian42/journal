@@ -25,8 +25,7 @@ def log_location(message, contact):
 			+ contact.get_display_name() \
 			+ (": " + message.media_caption.encode("utf-8") if message.media_caption is not None else ".")
 	events.add(summary, time, ["whatsapp", "message", "location"],
-			{"message": message.media_name.encode("utf-8")} if message.media_name is not None else {},
-			"wa-" + str(message._id), latitude=message.latitude, longitude=message.longitude)
+			{"message": message.media_name.encode("utf-8")} if message.media_name is not None else {}, latitude=message.latitude, longitude=message.longitude)
 
 
 def create_conversation_event(contact, message_count, time, history, images, sent_any, received_any):
@@ -47,7 +46,7 @@ def create_conversation_event(contact, message_count, time, history, images, sen
 
 def read_conversation(directory, contact_jid, contacts_dict):
 	contact = contacts_dict[contact_jid]
-	print("Reading conversation with " + contact.get_display_name() + "...")
+	print("Reading Whatsapp conversation with " + contact.get_display_name() + "...")
 	query = Message.select().where(Message.timestamp != 0 and Message.key_remote_jid == contact_jid).order_by(Message.timestamp)
 	
 	session_start_time = None
@@ -108,6 +107,8 @@ def get_contacts_dict(directory):
 
 
 def import_whatsapp(directory="data/WhatsApp/"):
+	events.prepare_import(12)
+	
 	messages.database.init(directory + "msgstore.db")
 	
 	contacts_dict = get_contacts_dict(directory)

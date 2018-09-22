@@ -15,13 +15,14 @@ def download_file(url, filename):
 	with open(filename, 'wb') as file:
 		file.write(request.content)
 
+
 def read_calendar(directory):
 	calendar_directory = directory + "Calendar/"
 	
 	for calendar_path in [os.path.join(calendar_directory, name) for name in os.listdir(calendar_directory)]:
 		cal = icalendar.Calendar.from_ical(open(calendar_path).read())
 		for event in cal.walk("vevent"):
-			events.add("Google Calendar event: " + event.get("summary"), event.get("dtstart").dt, ["google", "calendar", "event"], kvps={"location":event.get("location")}, hash=event.get("uuid"))
+			events.add("Google Calendar event: " + event.get("summary"), event.get("dtstart").dt, ["google", "calendar", "event"], kvps={"location":event.get("location")})
 
 
 def read_locations(directory):
@@ -166,14 +167,22 @@ def read_youtube_playlists(directory):
 
 
 def import_google(directory="data/google/"):
+	events.prepare_import(9)
 	with db.atomic():
+		print("Importing google calendar...")
 		read_calendar(directory)
 		#read_locations(directory)
+		print("Importing saved places...")
 		read_saved_places(directory)
+		print("Importing Youtube uploads...")
 		read_youtube_uploads(directory)
+		print("Importing Youtube subscriptions...")
 		read_youtube_subscriptions(directory)
+		print("Importing Youtube favorites...")
 		read_youtube_favorites(directory)
+		print("Importing Youtube Likes...")
 		read_youtube_likes(directory)
+		print("Importing Youtube Playlists...")
 		read_youtube_playlists(directory)
 
 

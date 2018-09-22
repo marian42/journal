@@ -7,6 +7,8 @@ currencies = {"EUR": "\u20AC", "USD": "$"}
 
 
 def import_paypal(directory="data/paypal/"):
+	events.prepare_import(5)
+	print("Importing Paypal payments...")
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
 			lines = open(file_name, encoding = "utf8").read().split("\n")
@@ -24,16 +26,15 @@ def import_paypal(directory="data/paypal/"):
 					continue
 				amount_positive = amount[0] != "-"
 				amount_absolute = amount.replace("-", "")
-				hash = data[12]
 				item = data[15]
 				
 				kvps = {"account": data[10], "message": item, "recipient-name": name,
 				        "recipient-account": data[11], "amount": amount}
 								
 				if amount_positive:
-					events.add("Received " + currency + " " + amount_absolute + " from " + name + (" for " + item if len(item) > 0 else "") + " using Paypal.", time, ["money", "paypal"], kvps, hash=hash)
+					events.add("Received " + currency + " " + amount_absolute + " from " + name + (" for " + item if len(item) > 0 else "") + " using Paypal.", time, ["money", "paypal"], kvps)
 				else:
-					events.add("Paid " + currency + " " + amount_absolute + " to " + name + (" for " + item if len(item) > 0 else "") + " using Paypal.", time, ["money", "paypal"], kvps, hash=hash)
+					events.add("Paid " + currency + " " + amount_absolute + " to " + name + (" for " + item if len(item) > 0 else "") + " using Paypal.", time, ["money", "paypal"], kvps)
 
 
 if __name__ == "__main__":

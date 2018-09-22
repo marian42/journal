@@ -5,7 +5,10 @@ from xml.etree import ElementTree
 import dateutil
 import re
 
+
 def import_wordpress(directory="data/wordpress/"):
+	events.prepare_import(0)
+	print("Importing Wordpress articles...")
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
 			tree = ElementTree.parse(file_name)

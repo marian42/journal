@@ -12,6 +12,8 @@ Save this page as an html document and provide the directory it's in.
 
 
 def import_steam(directory="data/steam/"):
+	events.prepare_import(2)
+	print("Importing Steam purchases...")
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
 			tree = html.fromstring(open(file_name).read())

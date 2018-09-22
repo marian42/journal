@@ -68,6 +68,7 @@ def create_comment_summary(comment, char_limit = 100):
 	
 	
 def import_reddit(directory = "data/reddit/"):
+	events.prepare_import(3)
 	if not os.path.isfile(directory + "submissions.json") or not os.path.isfile(directory + "comments.json"):
 		get_data(directory)
 	
@@ -78,7 +79,7 @@ def import_reddit(directory = "data/reddit/"):
 		print("Importing reddit submissions...")
 		for submission in submissions:
 			time = datetime.datetime.fromtimestamp(submission["time"])
-			events.add("Posted to " + submission["subreddit"] + ": " + submission["title"], time, ["reddit", "post", submission["subreddit"]], kvps = {k:submission[k] for k in submission if k != "time"}, hash = submission["id"])
+			events.add("Posted to " + submission["subreddit"] + ": " + submission["title"], time, ["reddit", "post", submission["subreddit"]], kvps = {k:submission[k] for k in submission if k != "time"})
 		
 		json_text = open(directory + "comments.json").read()
 		comments = json.loads(json_text)
@@ -88,7 +89,7 @@ def import_reddit(directory = "data/reddit/"):
 			time = datetime.datetime.fromtimestamp(comment["time"])
 			events.add("Commented in " + comment["subreddit"] + ": " + create_comment_summary(comment["message"]), time,
 			           ["reddit", "comment", comment["subreddit"]],
-			           kvps = {k: comment[k] for k in comment if k != "time"}, hash = comment["id"])
+			           kvps = {k: comment[k] for k in comment if k != "time"})
 
 
 if __name__ == "__main__":

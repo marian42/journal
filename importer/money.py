@@ -7,6 +7,8 @@ currencies = {"EUR": "\u20AC", "USD": "$"}
 
 
 def import_money(directory="data/money/"):
+	events.prepare_import(6)
+	print("Importing bank transfers...")
 	with db.atomic():
 		for file_name in [os.path.join(directory, name) for name in os.listdir(directory)]:
 			lines = open(file_name).read().split("\n")
@@ -31,6 +33,7 @@ def import_money(directory="data/money/"):
 					events.add("Received " + currency + " " + amount_absolute + " from " + recipient_name + ": " + message, time, ["money"], kvps)
 				else:
 					events.add("Sent " + currency + " " + amount_absolute + " to " + recipient_name + ": " + message, time, ["money"], kvps)
+
 
 if __name__ == "__main__":
 	import_money()

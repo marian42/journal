@@ -72,23 +72,27 @@ def read_messages(query, replies):
 		kvps = {"author": author, "subject": subject, "recipients": recipients, "message": "" if body is None else body}
 		summary = ("Replied to " if replies else "Sent an email to ") + get_short_recipients(recipients) + ": " + subject
 		
-		events.add(summary, time, tags, kvps, "mail-" + str(item.id))
+		events.add(summary, time, tags, kvps)
 
 
 def import_thunderbird(directory="data/thunderbird/"):
+	events.prepare_import(13)
+	
 	thunderbird_db.db.init(directory + "global-messages-db.sqlite")
 	
 	with db.atomic():
 		folder_ids = get_folder_ids()
-		
+
+		print("Importing emails...")
 		Message2 = Message.alias()
 		query = Message.select(Message.folderID, Message.date, MessageContent.c1subject, MessageContent.c0body, MessageContent.c3author, MessageContent.c4recipients)\
 			.join(MessageContent, on = (Message.id == MessageContent.docid).alias("content"))\
 			.where(Message.folderID << folder_ids & ~fn.EXISTS(Message2.select().where((Message.date > Message2.date) & (Message.conversationID == Message2.conversationID))))\
 			.order_by(Message.date)
-		
+
 		read_messages(query, False)
-		
+
+		print("Importing email replies...")
 		query = Message.select(Message.folderID, Message.date, MessageContent.c1subject, MessageContent.c0body, MessageContent.c3author, MessageContent.c4recipients) \
 			.join(MessageContent, on=(Message.id == MessageContent.docid).alias("content")) \
 			.where(Message.folderID << folder_ids & fn.EXISTS(Message2.select().where((Message.date > Message2.date) & (Message.conversationID == Message2.conversationID)))) \

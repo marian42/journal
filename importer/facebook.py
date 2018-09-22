@@ -145,13 +145,13 @@ def read_photos(directory):
 			           time,
 			           tags,
 			           kvps,
-			           hash=file,
 			           latitude=(metadata["latitude"] if "latitude" in metadata else None),
 			           longitude=(metadata["longitude"] if "longitude" in metadata else None),
 			           images=[(time, file)])
 
 
 def import_facebook_data(directory = "data/facebook/"):
+	events.prepare_import(11)
 	with db.atomic():
 		print("Reading Facebook app posts...")
 		read_app_posts(directory)

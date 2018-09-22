@@ -17,12 +17,12 @@ def import_repository(directory, emails=None):
 	count = 0
 	with db.atomic():
 		for commit in repo.iter_commits():
-			if emails != None and not commit.author.email in emails:
+			if emails is not None and commit.author.email not in emails:
 				continue
 			
 			events.add("Committed to " + name + ": " + commit.summary,
 				commit.committed_datetime,
-				hash=commit.hexsha, tags=["git", "commit", name],
+				tags=["git", "commit", name],
 				kvps={"author": commit.author, "message": commit.message})
 			count += 1
 	
@@ -31,6 +31,7 @@ def import_repository(directory, emails=None):
 
 
 def import_repositories(directory="data/git/"):
+	events.prepare_import(10)
 	emails = [
 		"mail@example.com"
 	]

@@ -91,12 +91,13 @@ def create_event(photos, camera):
 
 
 def import_photos(directory="data/photos/", session_time_seconds=60 * 60):
+	events.prepare_import(4)
 	photos = find_photos(directory)
 	print("Sorting photos...")
 	photos = sorted(photos, key=lambda p: p.time)
 
 	with db.atomic():
-		print("Writing photos to databse...")
+		print("Importing photos...")
 		last_photo_time = {}
 		current_photos = {}
 		
@@ -115,7 +116,6 @@ def import_photos(directory="data/photos/", session_time_seconds=60 * 60):
 		
 		for camera in current_photos:
 			create_event(current_photos[camera], camera)
-	print("Done importing images.")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from peewee import *
 
-db = SqliteDatabase('journal.db')
+db = SqliteDatabase('journal.db', pragmas = {"foreign_keys": 1})
+
 
 def init():
 	from model.event import Event

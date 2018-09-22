@@ -1,6 +1,7 @@
 from peewee import *
 from database import db
 
+
 class Tag(Model):
 	__tablename__ = 'tags'
 	

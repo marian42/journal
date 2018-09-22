@@ -5,6 +5,8 @@ import csv
 
 
 def import_linkedin(directory="data/linkedin/"):
+	events.prepare_import(7)
+	print("Importing LinkedIn contacts...")
 	with db.atomic():
 			file = open(directory + "Connections.csv", encoding = "utf8")
 			reader = csv.reader(file, delimiter = ",")

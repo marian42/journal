@@ -12,7 +12,7 @@ class Event(Model):
 	time = DateTimeField()
 	latitude = DoubleField(null=True)
 	longitude = DoubleField(null=True)
-	hash = CharField(null=True, index=True)
+	importer = IntegerField()
 	
 	def get_time(self):
 		if type(self.time) == datetime.datetime:

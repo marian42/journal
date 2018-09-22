@@ -7,7 +7,7 @@ from database import db
 class KeyValuePair(Model):
 	__tablename__ = 'keyvaluepair'
 	
-	event = ForeignKeyField(Event, backref='key_value_pairs')
+	event = ForeignKeyField(Event, backref='key_value_pairs', on_delete = 'cascade')
 	key = ForeignKeyField(Key)
 	value = CharField()
 	

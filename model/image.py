@@ -7,7 +7,7 @@ from PIL import Image as PILImage
 class Image(Model):
 	__tablename__ = 'images'
 	
-	event = ForeignKeyField(Event, backref='images')
+	event = ForeignKeyField(Event, backref='images', on_delete = 'cascade')
 	time = DateTimeField()
 	file = CharField()
 	
