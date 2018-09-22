@@ -5,8 +5,15 @@ import datetime
 import os
 
 
+def fix_encoding(string):
+	try:
+		return string.encode("latin-1").decode("utf-8")
+	except UnicodeDecodeError:
+		return string
+
+
 def load_to_json(filename):
-	json_data = open(filename).read()
+	json_data = open(filename, encoding = "utf-8").read()
 	return json.loads(json_data)
 
 
@@ -15,11 +22,11 @@ def read_app_posts(directory):
 	for post in data["app_posts"]:
 		attachment_data = post["attachments"][0]["data"][0]["external_context"]
 		time = datetime.datetime.fromtimestamp(post["timestamp"])
-		message = attachment_data["name"]
-		title = post["title"]
+		message = fix_encoding(attachment_data["name"])
+		title = fix_encoding(post["title"])
 		app_name = "unknown app"
 		if "via" in title:
-			app_name = title[title.index("via") + 4 : -1]
+			app_name = fix_encoding(title[title.index("via") + 4 : -1])
 		
 		kvps = {"message": message, "title": title, "app": app_name}
 		if "url" in attachment_data:
@@ -30,36 +37,37 @@ def read_app_posts(directory):
 def read_app_installs(directory):
 	data = load_to_json(directory + "apps/installed_apps.json")
 	for item in data["installed_apps"]:
-		events.add("Added Facebook app " + item["name"] + ".", datetime.datetime.fromtimestamp(item["time_added"]), ["facebook", "app"], {"app": item["name"]})
+		events.add("Added Facebook app " + fix_encoding(item["name"]) + ".", datetime.datetime.fromtimestamp(item["time_added"]), ["facebook", "app"], {"app": item["name"]})
 
 
 def read_comments(directory):
 	data = load_to_json(directory + "comments/comments.json")
 	for comment in data["comments"]:
 		time = datetime.datetime.fromtimestamp(comment["timestamp"])
-		message = comment["data"][0]["comment"]["comment"]
-		events.add("Facebook: " + comment["title"], time, ["facebook", "comment"], {"message": message})
+		message = fix_encoding(comment["data"][0]["comment"]["comment"])
+		events.add("Facebook: " + fix_encoding(comment["title"]), time, ["facebook", "comment"], {"message": message})
 
 
 def read_events(directory):
 	data = load_to_json(directory + "events/event_responses.json")
 	for event in data["event_responses"]["events_joined"]:
 		time = datetime.datetime.fromtimestamp(event["start_timestamp"])
-		name = event["name"]
+		name = fix_encoding(event["name"])
 		events.add("Participated in Facebook event: " + name, time, ["facebook", "event"], {"name": name})
 	
 	data = load_to_json(directory + "events/your_events.json")
 	for event in data["your_events"]:
 		time = datetime.datetime.fromtimestamp(event["start_timestamp"])
-		name = event["name"]
-		location = event["place"]["name"]
+		name = fix_encoding(event["name"])
+		location = fix_encoding(event["place"]["name"])
 		events.add("Hosted Facebook event: " + name, time, ["facebook", "event"], {"name": name, "location": location, "message": event["description"]})
-		
+
+
 def read_friends(directory):
 	data = load_to_json(directory + "friends/friends_added.json")
 	for friend in data["friends"]:
 		time = datetime.datetime.fromtimestamp(friend["timestamp"])
-		name = friend["name"]
+		name = fix_encoding(friend["name"])
 		events.add("Added Facebook friend " + name + ".", time, ["facebook", "friend"], {"name": name})
 
 
@@ -83,10 +91,10 @@ def read_messages(directory):
 		data = load_to_json(conversation + "/message.json")
 		if "title" not in data:
 			continue
-		title = data["title"]
+		title = fix_encoding(data["title"])
 		participants = [title]
 		if "participants" in data:
-			participants = data["participants"]
+			participants = [fix_encoding(name) for name in data["participants"]]
 		messages = data["messages"]
 		session_start_time = None
 		last_message_time = None
@@ -108,13 +116,13 @@ def read_messages(directory):
 					history = ""
 				last_message_time = message_time
 				message_count += 1
-				history += message["sender_name"] + ": " + message["content"] + "\n"
+				history += fix_encoding(message["sender_name"]) + ": " + fix_encoding(message["content"]) + "\n"
 			time = datetime.datetime.fromtimestamp(message["timestamp"])
-			if "photos" in message and not message["sender_name"] in participants:
+			if "photos" in message and not fix_encoding(message["sender_name"]) in participants:
 				events.add("Sent " + (str(len(message["photos"])) + " images" if len(message["photos"]) > 1 else "an image") + " to " + title + ".",
 				           time,
 				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)}, images=[(time, directory + photo["uri"]) for photo in message["photos"]])
-			if "photos" in message and "sender_name" in message in participants:
+			if "photos" in message and "sender_name" in fix_encoding(message["sender_name"]) in participants:
 				events.add("Received " + (str(len(message["photos"])) + " images" if len(
 					message["photos"]) > 1 else "an image") + " from " + message["sender_name"] + ".",
 				           time,
@@ -128,7 +136,7 @@ def read_photos(directory):
 	photo_directory = directory + "photos/album/"
 	for album_file in [os.path.join(photo_directory, name) for name in os.listdir(photo_directory)]:
 		data = load_to_json(album_file)
-		album_name = data["name"]
+		album_name = fix_encoding(data["name"])
 		for photo in data["photos"]:
 			file = directory + photo["uri"]
 			metadata = photo["media_metadata"]["photo_metadata"]
