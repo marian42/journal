@@ -121,12 +121,12 @@ def read_messages(directory):
 			if "photos" in message and not fix_encoding(message["sender_name"]) in participants:
 				events.add("Sent " + (str(len(message["photos"])) + " images" if len(message["photos"]) > 1 else "an image") + " to " + title + ".",
 				           time,
-				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)}, images=[(time, directory + photo["uri"]) for photo in message["photos"]])
+				           ["facebook", "message", "photo"], kvps={"participants": ", ".join(participants)}, images=[(time, directory + photo["uri"]) for photo in message["photos"]])
 			if "photos" in message and "sender_name" in fix_encoding(message["sender_name"]) in participants:
 				events.add("Received " + (str(len(message["photos"])) + " images" if len(
 					message["photos"]) > 1 else "an image") + " from " + message["sender_name"] + ".",
 				           time,
-				           ["facebook", "message", "image"], kvps={"participants": ", ".join(participants)},
+				           ["facebook", "message", "photo"], kvps={"participants": ", ".join(participants)},
 				           images=[(time, directory + photo["uri"]) for photo in message["photos"]])
 				
 		create_conversation_event(title, message_count, session_start_time, ", ".join(participants), history, session_count == 0)
