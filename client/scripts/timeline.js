@@ -1,8 +1,6 @@
 var timeline = [];
 var container = $('.timeline')[0];
 var dayDividers = {}
-var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var loadMoreIntervals = [];
 var icons = ["whatsapp", "paypal", "money", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter", "photo", "youtube", "reddit"];
 
@@ -179,7 +177,7 @@ class LoadMore extends TimelineElement {
 		other.counterpart = this;
 	}
 
-	replace(data, scroll) {
+	replace(data, scroll, callback) {
 		var start = this.forward ? this.time : this.counterpart.time;
 		var end = this.forward ? this.counterpart.time : this.time;
 		var complete = data.length < 100;
@@ -209,14 +207,17 @@ class LoadMore extends TimelineElement {
 			newLoadMore.setCounterpart(this.counterpart);
 		}
 
-		if (scroll) {
-			getDayDivider(new Date(data[0].time)).element.scrollIntoView();
+		container.scrollTo(0, this.forward ? scroll : container.scrollHeight - scroll);
+
+		if (callback != null) {
+			callback();
 		}
 	}
 
-	load(scroll) {
+	load(callback) {
 		var instance = this;
-		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward, "include": filterInclude, "tags": JSON.stringify(filterTags) }, success: function(data) { instance.replace(data, scroll); }});
+		var currentScroll = this.forward ? container.scrollTop : container.scrollHeight - container.scrollTop;
+		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward, "include": filterInclude, "tags": JSON.stringify(filterTags) }, success: function(data) { instance.replace(data, currentScroll, callback); }});
 	}
 
 	remove() {
@@ -282,19 +283,36 @@ function getDayDivider(day) {
 	return dayDividers[keyYear][keyMonth][keyDay];
 }
 
+function scrollTo(year, month, day) {
+	let startTime = new Date().getTime();
+	let startScroll = container.scrollTop;
+	(function step() {
+		let currentTime = new Date().getTime();
+		let progress = (currentTime - startTime) / 500;
+		let endScroll =  dayDividers[year][month][day].element.offsetTop;
+		if (progress > 1) {
+			container.scrollTo(0, endScroll);
+			return;
+		}
+		progress = 0.5 - 0.5 * Math.cos(progress * 3.14159);
+		container.scrollTo(0, startScroll * (1 - progress) + endScroll * progress);
+		setTimeout(step, 16);
+	})();
+}
+
 function jumpTo(time) {
-	keyYear = time.getFullYear()
-	keyMonth = time.getMonth() + 1;
-	keyDay = time.getDate();
+	let keyYear = time.getFullYear()
+	let keyMonth = time.getMonth() + 1;
+	let keyDay = time.getDate();
 	if (dayDividers[keyYear] != undefined && dayDividers[keyYear][keyMonth] != undefined && dayDividers[keyYear][keyMonth][keyDay] != undefined) {
-		dayDividers[keyYear][keyMonth][keyDay].element.scrollIntoView();
+		scrollTo(keyYear, keyMonth, keyDay);
 		return;
 	}
 
 	for (var item of loadMoreIntervals) {
 		if (item.contains(time)) {
 			var start = item.split(time);
-			start.load(true);
+			start.load(function() { scrollTo(keyYear, keyMonth, keyDay); });
 			return;
 		}
 	}
@@ -314,7 +332,7 @@ function initializeTimeline() {
 	loadMoreStart = new LoadMore(new Date(0), true);
 	loadMoreEnd = new LoadMore(new Date(), false);
 	loadMoreStart.setCounterpart(loadMoreEnd);
-	loadMoreEnd.load(true);
+	loadMoreEnd.load();
 }
 
 function updateFilter(include, tags) {

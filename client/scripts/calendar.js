@@ -1,5 +1,4 @@
 var calendar = $('.calendar')[0];
-var monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 var colorLimits = [0, 1, 5, 10, 20];
 
 function addElement(tag, className) {
@@ -59,7 +58,7 @@ function buildCalendar(data) {
 			freshLine = false;
 		}
 
-		element = addElement("div", "block day");
+		element = addElement("div", "block day tooltip");
 		count = 0;
 		keyYear = day.getFullYear()
 		keyMonth = day.getMonth() + 1;
@@ -71,11 +70,14 @@ function buildCalendar(data) {
 			}
 		setColor(element, count);
 
+		var tooltip = document.createElement("span");
+		tooltip.className = "tooltiptext";
+		tooltip.innerText = monthNames[keyMonth - 1] + " " + keyDay + " (" + count + ")";
+		element.appendChild(tooltip);
+
 		if (count != 0) {
-			(function() {
-				var dayCopy = new Date(day.getTime());
-				element.addEventListener('click', function() { jumpTo(dayCopy); });
-			}());
+			let dayCopy = new Date(day.getTime());
+			element.onclick = function() { jumpTo(dayCopy); };
 		}
 
 		if (day.getDay() == 6) {

@@ -41,7 +41,7 @@ body {
 .calendar {
 	position: absolute;
 	height: calc(100vh - 50px);
-	width: 230px;
+	width: 210px;
 	float: left;
 	background-color: #FAFAFA;
 	overflow-y: auto;
@@ -55,10 +55,11 @@ body {
 
 .calendar .block {
 	display: inline-block;
-	width: 14px;
-	height: 14px;
+	width: 12px;
+	height: 12px;
 	margin: 0px 1px;
 	color: #000000;
+	position: relative;
 }
 
 .calendar .day {
@@ -89,6 +90,7 @@ body {
     white-space:nowrap;
 	white-space: nowrap;
 	cursor: pointer;
+	margin-top: -2px;
 }
 
 .calendar .linebreak {
@@ -128,7 +130,7 @@ body {
 .timeline {
 	position: fixed;
 
-	margin-left: 230px;
+	margin-left: 210px;
 	margin-top: 50px;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -136,15 +138,23 @@ body {
 	box-sizing: border-box;
 
 	height: calc(100vh - 45px);
-	width: calc(100% - 230px);
+	width: calc(100% - 210px);
 
 	font-size: 14px;
 }
 
 .loadMore {
-	margin: 20px;
+	margin: 20px 0px;
+	padding: 20px 0px;
 	text-align: center;
 	cursor: pointer;
+	background-color: #F4F4F4;
+	border-top: 1px solid #E3E3E3;
+	border-bottom: 1px solid #E3E3E3;
+}
+
+.loadMore:hover {
+	background-color: #E3E3E3;
 }
 
 .event {
@@ -155,7 +165,7 @@ body {
 
 .timeline .day {
 	padding: 6px;
-	padding-top: 20px;
+	padding-top: 25px;
 	font-size: 18px;
 	font-weight: bold;
 }
@@ -172,6 +182,7 @@ body {
 .tags {
 	padding-left: 75px;
 	padding-top: 6px;
+	white-space: nowrap;
 }
 
 .tags .tag {
@@ -250,4 +261,35 @@ body {
 	max-height: 128px;
 	padding-right: 10px;
 	padding-bottom: 10px;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+    width: 120px;
+    left: -54px;
+    top: -28px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    font-size: 12px;
+	pointer-events: none;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
 }
