@@ -84,6 +84,10 @@ class Event extends TimelineElement {
 			var tagSpan = document.createElement("span");
 			tagSpan.className = "tag";
 			tagSpan.innerText = tag;
+			let tagCopy = tag;
+			tagSpan.onclick = function() {
+				addFilter(tagCopy);
+			}
 			tagsDiv.appendChild(tagSpan);
 		}
 
@@ -313,16 +317,7 @@ function initializeTimeline() {
 	loadMoreEnd.load(true);
 }
 
-function updateFilter() {
-	var include = $('.topbar select')[0].value == "with";
-	var tags = $('.filter')[0].value.replace(",", " ").split(" ");
-	for (var i = 0; i < tags.length; i++) {
-		tags[i] = tags[i].trim();
-		if (tags[i].length == 0) {
-			tags.splice(i, 1);
-			i--;
-		}
-	}
+function updateFilter(include, tags) {
 	$('.filter')[0].value = tags.join(" ");
 	$('.topbar select')[0].value = include ? "with" : "without";
 	filterTags = tags;
@@ -330,12 +325,28 @@ function updateFilter() {
 
 	initializeTimeline();
 	resetCalendar(filterInclude, filterTags);
+}
 
+function addFilter(tag) {
+	if (filterTags.includes(tag)) {
+		return;
+	}
+	filterTags.push(tag);
+	updateFilter(filterInclude, filterTags)
 }
 
 $('.filter')[0].onkeypress = function(event) {
 	if (event.keyCode == 13) {
-		updateFilter();
+		var include = $('.topbar select')[0].value == "with";
+		var tags = $('.filter')[0].value.replace(",", " ").split(" ");
+		for (var i = 0; i < tags.length; i++) {
+			tags[i] = tags[i].trim();
+			if (tags[i].length == 0) {
+				tags.splice(i, 1);
+				i--;
+			}
+		}
+		updateFilter(include, tags);
 	}
 }
 
