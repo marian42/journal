@@ -4,12 +4,15 @@ from flask import request
 from flask import send_file, send_from_directory
 from peewee import *
 import os
+import json
 
 import database
 
 from model.event import Event
 from model.keyvaluepair import KeyValuePair
 from model.image import Image
+from model.tagtoevent import TagToEvent
+from model.tag import Tag
 
 import datetime
 
@@ -31,8 +34,12 @@ graph = None
 @app.route("/api/days")
 def get_days():
 	global graph
-	if graph is None:
-		graph = CalendarGraph()
+	
+	filter_include = request.args.get('include') == "true"
+	tag_ids = [Tag.get_tag(tag).id for tag in json.loads(request.args.get('tags'))]
+	
+	if graph is None or graph.outdated(filter_include, tag_ids):
+		graph = CalendarGraph(filter_include, tag_ids)
 	return jsonify(graph.to_dict())
 
 
@@ -54,12 +61,29 @@ def to_dict(event):
 def get_events():
 	time = request.args.get('time')
 	before = request.args.get('before') == 'true'
-	date = datetime.datetime.fromtimestamp(float(time) / 1000.0)
+	try:
+		date = datetime.datetime.fromtimestamp(float(time) / 1000.0)
+	except OSError:
+		date = datetime.datetime.min
+	
+	filter_include = request.args.get('include') == "true"
+	tag_ids = [Tag.get_tag(tag).id for tag in json.loads(request.args.get('tags'))]
+	filter_query = fn.EXISTS(TagToEvent.select().where(TagToEvent.tag.in_(tag_ids) & (TagToEvent.event == Event.id)))
+	if not filter_include:
+		filter_query = ~ filter_query
+	
 	n = 100
-	if before:
-		query = Event.select().where(Event.time < date).order_by(Event.time.desc())[:n]
+	if any(tag_ids):
+		if before:
+			query = Event.select().where((Event.time < date) & filter_query).order_by(Event.time.desc())[:n]
+		else:
+			query = Event.select().where((Event.time > date) & filter_query).order_by(Event.time)[:n]
 	else:
-		query = Event.select().where(Event.time > date).order_by(Event.time)[:n]
+		if before:
+			query = Event.select().where(Event.time < date).order_by(Event.time.desc())[:n]
+		else:
+			query = Event.select().where(Event.time > date).order_by(Event.time)[:n]
+	
 	result = [to_dict(event) for event in query]
 	if before:
 		result = reversed(result)
@@ -92,7 +116,6 @@ def get_preview(id):
 def get_image(id):
 	image = Image.get(Image.id == id)
 	filename = image.file
-	print(filename)
 	return send_file(os.path.join(os.getcwd(), filename))
 	
 

@@ -22,6 +22,10 @@ function setColor(element, count) {
 }
 
 function buildCalendar(data) {
+	while (calendar.firstChild) {
+		calendar.removeChild(calendar.firstChild);
+	}
+
 	var currentYear = -1;
 	var currentMonth = -1;
 	var currentWeek = -1;
@@ -34,10 +38,6 @@ function buildCalendar(data) {
 
 	var day = new Date(data.first[0], data.first[1] - 1, data.first[2]);
 	var end = new Date(data.last[0], data.last[1] - 1, data.last[2]);
-
-	if (!initializedTimeline) {
-		initializeTimeline(day, end);
-	}
 
 	while (day < end) {
 		if (day.getFullYear() != currentYear) {
@@ -91,6 +91,10 @@ function buildCalendar(data) {
 
 		day.setDate(day.getDate() + 1);
 	}
+
+	calendar.scrollTo(0, calendar.scrollHeight);
 }
 
-$.ajax({url: "/api/days", success: buildCalendar});
+function resetCalendar(filterInclude, filterTags) {
+	$.ajax({url: "/api/days", data: {"include": filterInclude, "tags": JSON.stringify(filterTags) }, success: buildCalendar});
+}

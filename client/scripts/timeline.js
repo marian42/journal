@@ -6,19 +6,21 @@ var daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sa
 var loadMoreIntervals = [];
 var icons = ["whatsapp", "paypal", "money", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter", "photo", "youtube", "reddit"];
 
+var filterTags = [];
+var filterInclude = true;
 
 Date.prototype.format = function() {
-  var mm = this.getMonth() + 1;
-  var dd = this.getDate();
-  var hours = this.getHours();
-  var minutes = this.getMinutes();
-  return [(dd>9 ? '' : '0') + dd, (mm>9 ? '' : '0') + mm, this.getFullYear()].join('.') + " " + (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
+	var mm = this.getMonth() + 1;
+	var dd = this.getDate();
+	var hours = this.getHours();
+	var minutes = this.getMinutes();
+	return [(dd>9 ? '' : '0') + dd, (mm>9 ? '' : '0') + mm, this.getFullYear()].join('.') + " " + (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
 };
 
 Date.prototype.formatTime = function() {
-  var hours = this.getHours();
-  var minutes = this.getMinutes();
-  return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
+	var hours = this.getHours();
+	var minutes = this.getMinutes();
+	return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
 };
 
 class TimelineElement {
@@ -59,16 +61,15 @@ class Event extends TimelineElement {
 		timeDiv.className = "time";
 		element.appendChild(timeDiv);
 
-		for (var tag of dict.tags) {
-			if (icons.includes(tag)) {
+		for (var icon of icons) {
+			if (dict.tags.includes(icon)) {
 				var iconDiv = document.createElement("div");
 				iconDiv.className = "icon";
-				iconDiv.style.backgroundImage = "url(/icons/" + tag + ".png)";
+				iconDiv.style.backgroundImage = "url(/icons/" + icon + ".png)";
 				element.appendChild(iconDiv);
 				break;
 			}
 		}
-
 
 		var messageDiv = document.createElement("div");
 		messageDiv.innerText = dict.summary;
@@ -211,7 +212,7 @@ class LoadMore extends TimelineElement {
 
 	load(scroll) {
 		var instance = this;
-		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward}, success: function(data) { instance.replace(data, scroll); }});
+		$.ajax({url: "/api/events", data: {"time": this.time.getTime(), "before": !this.forward, "include": filterInclude, "tags": JSON.stringify(filterTags) }, success: function(data) { instance.replace(data, scroll); }});
 	}
 
 	remove() {
@@ -296,10 +297,47 @@ function jumpTo(time) {
 }
 
 var initializedTimeline = false;
-function initializeTimeline(start, end) {
+function initializeTimeline() {
 	initializedTimeline = true;
-	loadMoreStart = new LoadMore(new Date(start), true);
-	loadMoreEnd = new LoadMore(new Date(end), false);
+
+	while (container.firstChild) {
+		container.removeChild(container.firstChild);
+	}
+	timeline = [];
+	dayDividers = {}
+	loadMoreIntervals = [];
+
+	loadMoreStart = new LoadMore(new Date(0), true);
+	loadMoreEnd = new LoadMore(new Date(), false);
 	loadMoreStart.setCounterpart(loadMoreEnd);
 	loadMoreEnd.load(true);
 }
+
+function updateFilter() {
+	var include = $('.topbar select')[0].value == "with";
+	var tags = $('.filter')[0].value.replace(",", " ").split(" ");
+	for (var i = 0; i < tags.length; i++) {
+		tags[i] = tags[i].trim();
+		if (tags[i].length == 0) {
+			tags.splice(i, 1);
+			i--;
+		}
+	}
+	$('.filter')[0].value = tags.join(" ");
+	$('.topbar select')[0].value = include ? "with" : "without";
+	filterTags = tags;
+	filterInclude = include;
+
+	initializeTimeline();
+	resetCalendar(filterInclude, filterTags);
+
+}
+
+$('.filter')[0].onkeypress = function(event) {
+	if (event.keyCode == 13) {
+		updateFilter();
+	}
+}
+
+initializeTimeline();
+resetCalendar(true, []);
