@@ -6,6 +6,7 @@ import json
 import datetime
 import dateutil
 import requests
+import importer.generic
 
 
 def download_file(url, filename):
@@ -26,7 +27,7 @@ def read_calendar(directory):
 
 
 def read_locations(directory):
-	data = json.loads(open(directory + "Location History/Location History.json").read())
+	data = json.loads(open(directory + "Location History/Location History.json", encoding = "utf-8").read())
 	for item in data["locations"]:
 		time = datetime.datetime.fromtimestamp(int(item["timestampMs"]) / 1000)
 		if "latitudeE7" not in item:
@@ -37,7 +38,7 @@ def read_locations(directory):
 
 
 def read_saved_places(directory):
-	data = json.loads(open(directory + "Maps (your places)/Saved Places.json").read())
+	data = json.loads(open(directory + "Maps (your places)/Saved Places.json", encoding = "utf-8").read())
 	for place in data["features"]:
 		properties = place["properties"]
 		url = properties["Google Maps URL"]
@@ -166,6 +167,76 @@ def read_youtube_playlists(directory):
 		read_youtube_playlist(filename, name)
 
 
+def read_device_activations(directory):
+	activation_directory = directory + "Android Device configuration service"
+	for filename in [os.path.join(activation_directory, name) for name in os.listdir(activation_directory) if name.endswith(".html")]:
+		with open(filename, "r") as file:
+			lines = [line.strip() for line in file.readlines()]
+		data = {}
+		for line in lines:
+			if not line.endswith("<br/>"):
+				continue
+			line = line[0:-5]
+			items = line.split(":")
+			if len(items) < 2:
+				continue
+			data[items[0]] = ":".join(items[1:]).strip()
+		time = dateutil.parser.parse(data["Registration Time"])
+		kvps = {
+			"model": data["Model"],
+			"manufacturer": data["Manufacturer"],
+			"device": data["Device"],
+			"product": data["Product"],
+			"type": data["Device Type"]
+		}
+		events.add("Registered " + data["Device Type"] + ": " + data["Manufacturer"] + " " + data["Model"], time, ["google", "device", "android"], kvps)
+
+
+def read_transactions(directory):
+	transaction_directory = directory + "Google Pay\Transactions made on Google"
+	for filename in [os.path.join(transaction_directory, name) for name in os.listdir(transaction_directory) if name.endswith(".csv")]:
+		importer.generic.import_csv(filename, 0, "Purchased {2} from {3} for {6}", ["google", "purchase", "google-pay"], {"product": 2, "domain": 3, "status": 5, "amount": 6})
+
+
+def read_google_play_devices(directory):
+	json_text = open(directory + "Google Play Store/Devices.json", encoding = "utf8").read()
+	device_data = json.loads(json_text)
+	for device in device_data:
+		time = dateutil.parser.parse(device["device"]["deviceRegistrationTime"])
+		data = device["device"]["mostRecentData"]
+		kvps = {
+			"carrier": data["carrierName"],
+			"manufacturer": data["manufacturer"],
+			"model": data["modelName"],
+			"device": data["deviceName"],
+			"product": data["productName"]
+		}
+		events.add("Registered Google Play device " + data["manufacturer"] + " " + data["modelName"] + ".", time, ["google", "googleplay", "device"], kvps)
+		
+
+def read_google_play_installs(directory):
+	json_text = open(directory + "Google Play Store/Installs.json", encoding = "utf8").read()
+	install_data = json.loads(json_text)
+	
+	group_importer = importer.generic.GroupEvents()
+	
+	for install in [item["install"] for item in install_data]:
+		time = dateutil.parser.parse(install["firstInstallationTime"])
+		name = install["doc"]["title"]
+		device = install["deviceAttribute"]["deviceDisplayName"]
+		group_importer.add(time, (name, device), device)
+	
+	group_importer.create_events(
+		create_single = lambda time, data: events.add("Installed " + data[0] + " on " + data[1], time, ["google", "googleplay", "install"], {"app": data[0], "device": data[1]}),
+		create_many = lambda time, data: events.add("Installed " + data[0][0] + " and " + str(len(data) - 1) + " other " + ("app" if len(data) == 2 else "apps") +  " on " + data[0][1], time, ["google", "googleplay", "install"], {"apps": "\n".join([item[0] for item in data]), "device": data[0][1]})
+	)
+
+
+def read_google_play(directory):
+	read_google_play_devices(directory)
+	read_google_play_installs(directory)
+	
+
 def import_google(directory="data/google/"):
 	events.prepare_import(9)
 	with db.atomic():
@@ -184,6 +255,12 @@ def import_google(directory="data/google/"):
 		read_youtube_likes(directory)
 		print("Importing Youtube Playlists...")
 		read_youtube_playlists(directory)
+		print("Importing Google device activations...")
+		read_device_activations(directory)
+		print("Importing Google Pay transactions...")
+		read_transactions(directory)
+		print("Importing Google Play store activity...")
+		read_google_play(directory)
 
 
 if __name__ == "__main__":

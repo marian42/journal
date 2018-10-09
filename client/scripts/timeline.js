@@ -2,7 +2,7 @@ var timeline = [];
 var container = $('.timeline')[0];
 var dayDividers = {}
 var loadMoreIntervals = [];
-var icons = ["whatsapp", "paypal", "money", "email", "facebook", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter", "photo", "youtube", "reddit", "ebay"];
+var icons = ["whatsapp", "paypal", "money", "email", "facebook", "googleplay", "google", "twitter", "linkedin", "steam", "git", "wordpress", "kickstarter", "photo", "youtube", "reddit", "ebay"];
 
 var filterTags = [];
 var filterInclude = true;
